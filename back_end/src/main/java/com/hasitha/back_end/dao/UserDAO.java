@@ -11,18 +11,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author hasithawelikannage
  */
 public class UserDAO implements UserDAOInterface {
-
-    private DBConnection dbc = new DBConnection();
 
     /**
      *
@@ -32,7 +29,8 @@ public class UserDAO implements UserDAOInterface {
     @Override
     public List<User> findAll() throws DaoException {
         String sql = "SELECT * FROM users";
-        try (Connection c = dbc.getConnection()) {
+        try (Connection c = DBConnection.getConnection()) {
+
             PreparedStatement ps = c.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             List<User> list = new ArrayList<>();
@@ -43,14 +41,13 @@ public class UserDAO implements UserDAOInterface {
                                 rs.getString("first_name"),
                                 rs.getString("last_name"),
                                 rs.getString("username"),
-                                rs.getString("password"),
                                 rs.getString("role")
                         )
                 );
             }
             return list;
         } catch (SQLException ex) {
-            //Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+
             throw new DaoException("Database error while fetching users", ex);
         }
     }
@@ -58,11 +55,11 @@ public class UserDAO implements UserDAOInterface {
     @Override
     public User findById(int id) throws DaoException {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection c = dbc.getConnection()) {
+        try (Connection c = DBConnection.getConnection()) {
 
-            PreparedStatement statement = c.prepareStatement(sql);
-            statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
 
@@ -79,8 +76,76 @@ public class UserDAO implements UserDAOInterface {
             }
 
         } catch (SQLException ex) {
-            //Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+
             throw new DaoException("Database error while fetching users", ex);
+        }
+    }
+
+    @Override
+    public User create(User user) throws DaoException {
+        String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?,?, ?)";
+
+        try (Connection c = DBConnection.getConnection();) {
+            PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getUserName());
+            ps.setString(4, user.getPassword());
+            ps.setString(5, user.getRole());
+
+            int affected = ps.executeUpdate();
+            if (affected == 0) {
+                throw new DaoException("Creating user failed, no rows affected");
+            }
+
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                user.setId(generatedKeys.getInt(1));
+            } else {
+                throw new DaoException("Creating user failed, no ID obtained.");
+            }
+
+            return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            throw new DaoException("Database error while creating user", ex);
+        }
+    }
+
+    @Override
+    public User update(int id, User user) throws DaoException {
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, role = ? WHERE id = ?";
+        try (Connection c = DBConnection.getConnection()) {
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getUserName());
+            ps.setString(4, user.getRole());
+            ps.setInt(5, id);
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DaoException("Updating user failed, no rows affected.");
+            }
+
+            return findById(id); // return updated user
+        } catch (SQLException ex) {
+            throw new DaoException("Database error while updating user", ex);
+        }
+    }
+
+    @Override
+    public void delete(int id) throws DaoException {
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (Connection c = DBConnection.getConnection()) {
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setInt(1, id);
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DaoException("Deleting user failed, no rows affected.");
+            }
+        } catch (SQLException ex) {
+            throw new DaoException("Database error while deleting user", ex);
         }
     }
 }

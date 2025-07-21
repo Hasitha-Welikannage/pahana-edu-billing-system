@@ -15,4 +15,7 @@ import java.util.List;
 public interface UserDAOInterface {
     public List<User> findAll() throws DaoException;
     public User findById(int id) throws DaoException;
+    public User create(User user) throws DaoException;
+    public User update(int id, User user) throws DaoException;
+    public void delete(int id) throws DaoException;
 }
