@@ -74,7 +74,7 @@ public class Bill {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal() {
         this.total = calculateTotal(this.items);
     }
 
