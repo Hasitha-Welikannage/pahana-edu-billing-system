@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.hasitha.back_end.dao;
+package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.DaoException;
-import com.hasitha.back_end.model.User;
+import com.hasitha.back_end.user.User;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
