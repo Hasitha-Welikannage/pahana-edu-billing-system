@@ -10,6 +10,8 @@ package com.hasitha.back_end.bill;
  */
 public class BillItem {
 
+    private int id;
+    private int billId;
     private int itemId;
     private int quantity;
     private double totalPrice;
@@ -17,10 +19,28 @@ public class BillItem {
     public BillItem() {
     }
 
-    public BillItem(int itemId, int quantity, double totalPrice) {
+    public BillItem(int id, int billId, int itemId, int quantity, double totalPrice) {
+        this.id = id;
+        this.billId = billId;
         this.itemId = itemId;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getBillId() {
+        return billId;
+    }
+
+    public void setBillId(int billId) {
+        this.billId = billId;
     }
 
     public int getItemId() {
@@ -51,6 +71,5 @@ public class BillItem {
     public String toString() {
         return "BillItem{" + "itemId=" + itemId + ", quantity=" + quantity + ", totalPrice=" + totalPrice + '}';
     }
-    
-    
+
 }

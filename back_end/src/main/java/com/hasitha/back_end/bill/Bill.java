@@ -11,11 +11,13 @@ import java.util.List;
  * @author hasithawelikannage
  */
 public class Bill {
+
     private int id;
     private int customerId;
     private int userId;
     private String date;
     private List<BillItem> items;
+    private double total;
 
     public Bill() {
     }
@@ -68,10 +70,26 @@ public class Bill {
         this.items = items;
     }
 
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = calculateTotal(this.items);
+    }
+
+    public double calculateTotal(List<BillItem> items) {
+
+        double totalAmount = 0;
+        for (BillItem item : items) {
+            totalAmount += item.getTotalPrice();
+        }
+        return totalAmount;
+    }
+
     @Override
     public String toString() {
         return "Bill{" + "id=" + id + ", customerId=" + customerId + ", userId=" + userId + ", date=" + date + ", items=" + items + '}';
     }
-    
-    
+
 }
