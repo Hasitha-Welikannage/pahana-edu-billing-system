@@ -18,4 +18,6 @@ public interface UserDAOInterface {
     public User create(User user) throws DaoException;
     public User update(int id, User user) throws DaoException;
     public void delete(int id) throws DaoException;
+    public User findByUsernameAndPassword(String username, String password) throws DaoException;
+
 }

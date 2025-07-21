@@ -148,4 +148,28 @@ public class UserDAO implements UserDAOInterface {
             throw new DaoException("Database error while deleting user", ex);
         }
     }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) throws DaoException {
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+            ps.setString(2, password); // plain text for assignment only
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("username"),
+                        rs.getString("role")
+                );
+            }
+            return null;
+        } catch (SQLException ex) {
+            throw new DaoException("Error authenticating user", ex);
+        }
+    }
 }
