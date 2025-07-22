@@ -4,6 +4,7 @@
  */
 package com.hasitha.back_end.bill;
 
+import com.hasitha.back_end.billItem.BillItem;
 import java.util.List;
 
 /**
