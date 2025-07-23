@@ -5,6 +5,7 @@
 package com.hasitha.back_end.bill;
 
 import com.hasitha.back_end.billItem.BillItem;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,19 +17,19 @@ public class Bill {
     private int id;
     private int customerId;
     private int userId;
-    private String date;
-    private List<BillItem> items;
+    private Date date;
     private double total;
+    private List<BillItem> items;
 
     public Bill() {
     }
 
-    public Bill(int id, int customerId, int userId, String date, List<BillItem> items) {
+    public Bill(int id, int customerId, int userId, Date date, double total) {
         this.id = id;
         this.customerId = customerId;
         this.userId = userId;
         this.date = date;
-        this.items = items;
+        this.total = total;
     }
 
     public int getId() {
@@ -55,12 +56,20 @@ public class Bill {
         this.userId = userId;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
+    }
+
+    public double getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 
     public List<BillItem> getItems() {
@@ -71,26 +80,9 @@ public class Bill {
         this.items = items;
     }
 
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal() {
-        this.total = calculateTotal(this.items);
-    }
-
-    public double calculateTotal(List<BillItem> items) {
-
-        double totalAmount = 0;
-        for (BillItem item : items) {
-            totalAmount += item.getTotalPrice();
-        }
-        return totalAmount;
-    }
-
     @Override
     public String toString() {
-        return "Bill{" + "id=" + id + ", customerId=" + customerId + ", userId=" + userId + ", date=" + date + ", items=" + items + '}';
+        return "Bill{" + "id=" + id + ", customerId=" + customerId + ", userId=" + userId + ", date=" + date + '}';
     }
 
 }

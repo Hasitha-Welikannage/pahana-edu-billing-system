@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.customer;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -33,7 +33,7 @@ public class CustomerResource {
         try {
             List<Customer> customers = dao.findAll();
             return Response.ok(customers).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Failed to fetch customers").build();
         }
     }
@@ -47,7 +47,7 @@ public class CustomerResource {
                 return Response.status(Response.Status.NOT_FOUND).entity("Customer not found").build();
             }
             return Response.ok(customer).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Failed to fetch customer").build();
         }
     }
@@ -57,7 +57,7 @@ public class CustomerResource {
         try {
             Customer created = dao.create(customer);
             return Response.status(Response.Status.CREATED).entity(created).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Failed to create customer").build();
         }
     }
@@ -71,7 +71,7 @@ public class CustomerResource {
                 return Response.status(Response.Status.NOT_FOUND).entity("Customer not found").build();
             }
             return Response.ok(updated).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Failed to update customer").build();
         }
     }
@@ -82,7 +82,7 @@ public class CustomerResource {
         try {
             dao.delete(id);
             return Response.noContent().build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Failed to delete customer").build();
         }
     }

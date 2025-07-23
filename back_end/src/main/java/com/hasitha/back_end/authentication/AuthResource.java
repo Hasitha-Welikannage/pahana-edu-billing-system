@@ -7,7 +7,7 @@ package com.hasitha.back_end.authentication;
 import com.hasitha.back_end.user.UserDAO;
 import com.hasitha.back_end.user.UserDAOInterface;
 import com.hasitha.back_end.authentication.LoginRequest;
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
@@ -43,7 +43,7 @@ public class AuthResource {
                         .entity("Invalid username or password")
                         .build();
             }
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Login error: " + e.getMessage())
                     .build();

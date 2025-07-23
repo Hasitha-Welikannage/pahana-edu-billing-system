@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.customer;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import java.util.List;
 
 /**
@@ -13,13 +13,13 @@ import java.util.List;
  */
 public interface CustomerDAOInterface {
 
-    public List<Customer> findAll() throws DaoException;
+    public List<Customer> findAll() throws AppException;
 
-    public Customer findById(int id) throws DaoException;
+    public Customer findById(int id) throws AppException;
 
-    public Customer create(Customer customer) throws DaoException;
+    public Customer create(Customer customer) throws AppException;
 
-    public Customer update(int id, Customer customer) throws DaoException;
+    public Customer update(int id, Customer customer) throws AppException;
 
-    public void delete(int id) throws DaoException;
+    public void delete(int id) throws AppException;
 }

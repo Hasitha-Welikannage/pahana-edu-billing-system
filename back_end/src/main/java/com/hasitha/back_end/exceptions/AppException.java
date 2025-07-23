@@ -8,13 +8,13 @@ package com.hasitha.back_end.exceptions;
  *
  * @author hasithawelikannage
  */
-public class DaoException extends Exception {
+public class AppException extends Exception {
 
-    public DaoException(String message, Throwable cause) {
+    public AppException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public DaoException(String message) {
+    public AppException(String message) {
         super(message);
     }
 }

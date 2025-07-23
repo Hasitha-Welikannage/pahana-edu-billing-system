@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.user.User;
 import java.util.List;
 
@@ -14,16 +14,16 @@ import java.util.List;
  */
 public interface UserDAOInterface {
 
-    public List<User> findAll() throws DaoException;
+    public List<User> findAll() throws AppException;
 
-    public User findById(int id) throws DaoException;
+    public User findById(int id) throws AppException;
 
-    public User create(User user) throws DaoException;
+    public User create(User user) throws AppException;
 
-    public User update(int id, User user) throws DaoException;
+    public User update(int id, User user) throws AppException;
 
-    public void delete(int id) throws DaoException;
+    public void delete(int id) throws AppException;
 
-    public User findByUsernameAndPassword(String username, String password) throws DaoException;
+    public User findByUsernameAndPassword(String username, String password) throws AppException;
 
 }

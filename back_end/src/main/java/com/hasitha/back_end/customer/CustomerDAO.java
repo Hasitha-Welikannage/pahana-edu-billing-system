@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.customer;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +21,7 @@ import java.util.List;
 public class CustomerDAO implements CustomerDAOInterface {
 
     @Override
-    public List<Customer> findAll() throws DaoException {
+    public List<Customer> findAll() throws AppException {
         String sql = "SELECT * FROM customers";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -37,12 +37,12 @@ public class CustomerDAO implements CustomerDAOInterface {
             }
             return list;
         } catch (SQLException e) {
-            throw new DaoException("Error fetching customers", e);
+            throw new AppException("Error fetching customers", e);
         }
     }
 
     @Override
-    public Customer findById(int id) throws DaoException {
+    public Customer findById(int id) throws AppException {
         String sql = "SELECT * FROM customers WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -59,12 +59,12 @@ public class CustomerDAO implements CustomerDAOInterface {
             }
             return null;
         } catch (SQLException e) {
-            throw new DaoException("Error fetching customer", e);
+            throw new AppException("Error fetching customer", e);
         }
     }
 
     @Override
-    public Customer create(Customer customer) throws DaoException {
+    public Customer create(Customer customer) throws AppException {
         String sql = "INSERT INTO customers (first_name, last_name, address, phone) VALUES (?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -80,15 +80,15 @@ public class CustomerDAO implements CustomerDAOInterface {
                 customer.setId(keys.getInt(1));
                 return customer;
             } else {
-                throw new DaoException("Creating customer failed, no ID returned.");
+                throw new AppException("Creating customer failed, no ID returned.");
             }
         } catch (SQLException e) {
-            throw new DaoException("Error creating customer", e);
+            throw new AppException("Error creating customer", e);
         }
     }
 
     @Override
-    public Customer update(int id, Customer customer) throws DaoException {
+    public Customer update(int id, Customer customer) throws AppException {
         String sql = "UPDATE customers SET first_name=?, last_name=?, address=?, phone=? WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -106,12 +106,12 @@ public class CustomerDAO implements CustomerDAOInterface {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DaoException("Error updating customer", e);
+            throw new AppException("Error updating customer", e);
         }
     }
 
     @Override
-    public void delete(int id) throws DaoException {
+    public void delete(int id) throws AppException {
         String sql = "DELETE FROM customers WHERE id = ?";
         try (
                 Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -119,7 +119,7 @@ public class CustomerDAO implements CustomerDAOInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new DaoException("Error deleting customer", e);
+            throw new AppException("Error deleting customer", e);
         }
     }
 

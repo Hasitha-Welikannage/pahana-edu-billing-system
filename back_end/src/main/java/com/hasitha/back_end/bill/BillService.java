@@ -4,10 +4,16 @@
  */
 package com.hasitha.back_end.bill;
 
+import com.hasitha.back_end.exceptions.AppException;
+
 /**
  *
  * @author hasithawelikannage
  */
 public class BillService {
+    BillDAOInterface  billDAO = new BillDAO();
     
+    public void create(Bill bill) throws AppException {
+        
+    }
 }

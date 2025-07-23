@@ -27,6 +27,13 @@ public class BillItem {
         this.totalPrice = totalPrice;
     }
 
+    public BillItem(int billId, int itemId, int quantity, double totalPrice) {
+        this.billId = billId;
+        this.itemId = itemId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+    }
+
     public int getId() {
         return id;
     }

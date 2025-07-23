@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -39,7 +39,7 @@ public class UserResource {
                         .build();
             }
             return Response.ok(list).build();
-        } catch (DaoException ex) {
+        } catch (AppException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error fetching users: " + ex.getMessage())
                     .build();
@@ -58,7 +58,7 @@ public class UserResource {
                         .build();
             }
             return Response.ok(user).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error fetching user: " + e.getMessage())
                     .build();
@@ -73,7 +73,7 @@ public class UserResource {
             return Response.status(Response.Status.CREATED)
                     .entity(createdUser)
                     .build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error creating user: " + e.getMessage()+"\n" + e.getCause())
                     .build();
@@ -92,7 +92,7 @@ public class UserResource {
                         .build();
             }
             return Response.ok(updatedUser).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error updating user: " + e.getMessage())
                     .build();
@@ -113,7 +113,7 @@ public class UserResource {
 
             userDao.delete(id);
             return Response.noContent().build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error deleting user: " + e.getMessage())
                     .build();

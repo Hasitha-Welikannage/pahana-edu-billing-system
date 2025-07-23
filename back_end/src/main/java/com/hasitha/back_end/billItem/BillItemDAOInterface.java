@@ -4,16 +4,16 @@
  */
 package com.hasitha.back_end.billItem;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import java.util.List;
 
 /**
  *
  * @author hasithawelikannage
  */
-public interface BillItemsDAOInterface {
+public interface BillItemDAOInterface {
 
-    public void saveItems(int billId, List<BillItem> items) throws DaoException;
+    public void saveItems(List<BillItem> items) throws AppException;
 
-    public List<BillItem> findByBillId(int billId) throws DaoException;
+    public List<BillItem> findByBillId(int billId) throws AppException;
 }

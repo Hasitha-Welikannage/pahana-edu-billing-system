@@ -1,6 +1,6 @@
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.DaoException;
+import com.hasitha.back_end.exceptions.AppException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -34,7 +34,7 @@ public class ItemResource {
         try {
             List<Item> items = dao.findAll();
             return Response.ok(items).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Error fetching items").build();
         }
     }
@@ -48,7 +48,7 @@ public class ItemResource {
                 return Response.status(Response.Status.NOT_FOUND).entity("Item not found").build();
             }
             return Response.ok(item).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Error fetching item").build();
         }
     }
@@ -58,7 +58,7 @@ public class ItemResource {
         try {
             Item created = dao.create(item);
             return Response.status(Response.Status.CREATED).entity(created).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Error creating item").build();
         }
     }
@@ -72,7 +72,7 @@ public class ItemResource {
                 return Response.status(Response.Status.NOT_FOUND).entity("Item not found").build();
             }
             return Response.ok(updated).build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Error updating item" + e.getCause()).build();
         }
     }
@@ -83,7 +83,7 @@ public class ItemResource {
         try {
             dao.delete(id);
             return Response.noContent().build();
-        } catch (DaoException e) {
+        } catch (AppException e) {
             return Response.serverError().entity("Error deleting item").build();
         }
     }
