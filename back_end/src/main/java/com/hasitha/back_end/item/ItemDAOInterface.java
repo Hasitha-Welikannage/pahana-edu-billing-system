@@ -13,15 +13,18 @@ import java.util.List;
  */
 public interface ItemDAOInterface {
 
-    List<Item> findAll() throws AppException;
+    public List<Item> findAll() throws AppException;
 
-    Item findById(int id) throws AppException;
+    public Item findById(int id) throws AppException;
 
-    Item create(Item item) throws AppException;
+    public Item create(Item item) throws AppException;
 
-    Item update(int id, Item item) throws AppException;
+    public Item update(int id, Item item) throws AppException;
 
-    void delete(int id) throws AppException;
+    public void delete(int id) throws AppException;
 
-    double getPriceById(int itemId) throws AppException;
+    public double getPriceById(int itemId) throws AppException;
+
+    public boolean exists(int itemId) throws AppException;
+
 }

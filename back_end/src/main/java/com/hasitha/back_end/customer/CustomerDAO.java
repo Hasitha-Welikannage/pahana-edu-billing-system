@@ -6,11 +6,7 @@ package com.hasitha.back_end.customer;
 
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.utils.DBConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,6 +116,17 @@ public class CustomerDAO implements CustomerDAOInterface {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new AppException("Error deleting customer", e);
+        }
+    }
+
+    @Override
+    public boolean exists(int customerId) throws AppException {
+        String sql = "SELECT 1 FROM customers WHERE id = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            return ps.executeQuery().next();
+        } catch (SQLException e) {
+            throw new AppException("Customer exists check error", e);
         }
     }
 

@@ -22,4 +22,7 @@ public interface CustomerDAOInterface {
     public Customer update(int id, Customer customer) throws AppException;
 
     public void delete(int id) throws AppException;
+
+    public boolean exists(int customerId) throws AppException;
+
 }

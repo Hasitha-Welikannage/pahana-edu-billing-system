@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface BillItemDAOInterface {
 
-    public void saveItems(List<BillItem> items) throws AppException;
+    public void saveItems(int billId,List<BillItem> items) throws AppException;
 
     public List<BillItem> findByBillId(int billId) throws AppException;
 }

@@ -37,7 +37,7 @@ public class BillDAO implements BillDAOInterface {
             }
 
         } catch (SQLException e) {
-            throw new AppException("Error creating bill", e);
+            throw new AppException("Error creating bill" + e.getMessage(), e);
         }
     }
 

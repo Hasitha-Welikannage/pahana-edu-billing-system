@@ -17,12 +17,12 @@ import java.util.ArrayList;
 public class BillItemDAO implements BillItemDAOInterface {
 
     @Override
-    public void saveItems( List<BillItem> items) throws AppException {
+    public void saveItems(int billId, List<BillItem> items) throws AppException {
         String sql = "INSERT INTO bill_items (bill_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             for (BillItem item : items) {
-                ps.setInt(1, item.getBillId());
+                ps.setInt(1, billId);
                 ps.setInt(2, item.getItemId());
                 ps.setInt(3, item.getQuantity());
                 ps.setDouble(4, item.getTotalPrice());
