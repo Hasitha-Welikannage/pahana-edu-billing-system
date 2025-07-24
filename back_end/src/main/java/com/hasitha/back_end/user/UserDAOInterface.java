@@ -5,6 +5,7 @@
 package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.user.User;
 import java.util.List;
 
@@ -24,6 +25,6 @@ public interface UserDAOInterface {
 
     public void delete(int id) throws AppException;
 
-    public User findByUsernameAndPassword(String username, String password) throws AppException;
+    public User findByUsernameAndPassword(String username, String password) throws DatabaseException;
 
 }

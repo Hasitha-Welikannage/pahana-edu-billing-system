@@ -5,7 +5,7 @@
 package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.AppException;
-import com.hasitha.back_end.user.User;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -150,7 +150,7 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) throws AppException {
+    public User findByUsernameAndPassword(String username, String password) throws DatabaseException {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -169,7 +169,7 @@ public class UserDAO implements UserDAOInterface {
             }
             return null;
         } catch (SQLException ex) {
-            throw new AppException("Error authenticating user", ex);
+            throw new DatabaseException("Error authenticating user", ex);
         }
     }
 }

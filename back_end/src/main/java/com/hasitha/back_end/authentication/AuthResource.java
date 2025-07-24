@@ -4,10 +4,8 @@
  */
 package com.hasitha.back_end.authentication;
 
-import com.hasitha.back_end.user.UserDAO;
-import com.hasitha.back_end.user.UserDAOInterface;
-import com.hasitha.back_end.authentication.LoginRequest;
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
+import com.hasitha.back_end.exceptions.ValidationException;
 import com.hasitha.back_end.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
@@ -28,13 +26,13 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
-    private final UserDAOInterface userDao = new UserDAO();
+    private final AuthService authService = new AuthService();
 
     @POST
     @Path("/login")
     public Response login(LoginRequest request, @Context HttpServletRequest httpRequest) {
         try {
-            User user = userDao.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+            User user = authService.login(request);
             if (user != null) {
                 httpRequest.getSession(true).setAttribute("user", user);
                 return Response.ok(user).build();
@@ -43,7 +41,11 @@ public class AuthResource {
                         .entity("Invalid username or password")
                         .build();
             }
-        } catch (AppException e) {
+        } catch (ValidationException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Login error: " + e.getMessage())
+                    .build();
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Login error: " + e.getMessage())
                     .build();
