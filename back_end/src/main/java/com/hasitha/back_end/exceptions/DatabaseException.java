@@ -11,10 +11,12 @@ package com.hasitha.back_end.exceptions;
 public class DatabaseException extends AppException {
 
     public DatabaseException(String m, Throwable c) {
-        super(m, c);
+
+        super("Database Error: " + m, c);
     }
-    
+
     public DatabaseException(String m) {
-        super(m);
+
+        super("Database Error: " + m);
     }
 }

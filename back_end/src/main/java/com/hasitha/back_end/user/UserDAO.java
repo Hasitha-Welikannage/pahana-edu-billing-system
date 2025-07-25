@@ -49,7 +49,7 @@ public class UserDAO implements UserDAOInterface {
             return list;
         } catch (SQLException ex) {
 
-            throw new DatabaseException("Database error while fetching users", ex);
+            throw new DatabaseException("database error while fetching users", ex);
         }
     }
     
@@ -79,7 +79,7 @@ public class UserDAO implements UserDAOInterface {
 
         } catch (SQLException ex) {
 
-            throw new DatabaseException("Database error while fetching users", ex);
+            throw new DatabaseException("database error while fetching users", ex);
         }
     }
 
@@ -98,20 +98,20 @@ public class UserDAO implements UserDAOInterface {
 
             int affected = ps.executeUpdate();
             if (affected == 0) {
-                throw new DatabaseException("Creating user failed, no rows affected");
+                throw new DatabaseException("creating user failed, no rows affected");
             }
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
                 user.setId(generatedKeys.getInt(1));
             } else {
-                throw new DatabaseException("Creating user failed, no ID obtained.");
+                throw new DatabaseException("creating user failed, no ID obtained.");
             }
 
             return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
         } catch (SQLException ex) {
             System.out.println(ex);
-            throw new DatabaseException("Database error while creating user", ex);
+            throw new DatabaseException("database error while creating user", ex);
         }
     }
 
@@ -129,12 +129,12 @@ public class UserDAO implements UserDAOInterface {
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("Updating user failed, no rows affected.");
+                throw new DatabaseException("updating user failed, no rows affected.");
             }
 
             return findById(id); // return updated user
         } catch (SQLException ex) {
-            throw new DatabaseException("Database error while updating user", ex);
+            throw new DatabaseException("database error while updating user", ex);
         }
     }
     
@@ -147,10 +147,10 @@ public class UserDAO implements UserDAOInterface {
             ps.setInt(1, id);
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("Deleting user failed, no rows affected.");
+                throw new DatabaseException("deleting user failed, no rows affected.");
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("Database error while deleting user", ex);
+            throw new DatabaseException("database error while deleting user", ex);
         }
     }
 
@@ -174,7 +174,7 @@ public class UserDAO implements UserDAOInterface {
             }
             return null;
         } catch (SQLException ex) {
-            throw new DatabaseException("Error authenticating user", ex);
+            throw new DatabaseException("error authenticating user", ex);
         }
     }
 }

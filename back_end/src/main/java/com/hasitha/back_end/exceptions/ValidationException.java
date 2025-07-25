@@ -11,6 +11,6 @@ package com.hasitha.back_end.exceptions;
 public class ValidationException extends AppException {
 
     public ValidationException(String m) {
-        super(m);
+        super("Validation Error: " + m);
     }
 }

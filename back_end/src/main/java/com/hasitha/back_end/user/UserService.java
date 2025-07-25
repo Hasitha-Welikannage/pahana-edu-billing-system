@@ -23,7 +23,7 @@ public class UserService {
         List<User> userList = userDao.findAll();
 
         if (userList == null || userList.isEmpty()) {
-            throw new NotFoundException("Users not found");
+            throw new NotFoundException("users not found");
         }
 
         return userList;
@@ -35,7 +35,7 @@ public class UserService {
         User user = userDao.findById(id);
 
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("user not found");
         }
 
         return user;
@@ -45,23 +45,23 @@ public class UserService {
     public User create(User user) throws DatabaseException, ValidationException {
 
         if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
-            throw new ValidationException("First name can not be empty");
+            throw new ValidationException("first name can not be empty");
         }
 
         if (user.getLastName() == null || user.getLastName().equalsIgnoreCase("")) {
-            throw new ValidationException("Last name can not be empty");
+            throw new ValidationException("last name can not be empty");
         }
 
         if (user.getUserName() == null || user.getUserName().equalsIgnoreCase("")) {
-            throw new ValidationException("User name can not be empty");
+            throw new ValidationException("user name can not be empty");
         }
 
         if (user.getPassword() == null || user.getPassword().equalsIgnoreCase("")) {
-            throw new ValidationException("Password can not be empty");
+            throw new ValidationException("password can not be empty");
         }
 
         if (user.getRole() == null || user.getRole().equalsIgnoreCase("")) {
-            throw new ValidationException("User role can not be empty");
+            throw new ValidationException("user role can not be empty");
         }
 
         User createdUser = userDao.create(user);
@@ -75,27 +75,27 @@ public class UserService {
         User user = userDao.findById(id);
 
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("user not found");
         }
 
         if (userUpdate.getFirstName() == null || userUpdate.getFirstName().equalsIgnoreCase("")) {
-            throw new ValidationException("First name can not be empty");
+            throw new ValidationException("first name can not be empty");
         }
 
         if (userUpdate.getLastName() == null || userUpdate.getLastName().equalsIgnoreCase("")) {
-            throw new ValidationException("Last name can not be empty");
+            throw new ValidationException("last name can not be empty");
         }
 
         if (userUpdate.getUserName() == null || userUpdate.getUserName().equalsIgnoreCase("")) {
-            throw new ValidationException("User name can not be empty");
+            throw new ValidationException("user name can not be empty");
         }
 
         if (userUpdate.getPassword() == null || userUpdate.getPassword().equalsIgnoreCase("")) {
-            throw new ValidationException("Password can not be empty");
+            throw new ValidationException("password can not be empty");
         }
 
         if (userUpdate.getRole() == null || userUpdate.getRole().equalsIgnoreCase("")) {
-            throw new ValidationException("User role can not be empty");
+            throw new ValidationException("user role can not be empty");
         }
 
         User updatedUser = userDao.update(id, userUpdate);
@@ -109,7 +109,7 @@ public class UserService {
         User user = userDao.findById(id);
 
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("user not found");
         }
 
         userDao.delete(id);
