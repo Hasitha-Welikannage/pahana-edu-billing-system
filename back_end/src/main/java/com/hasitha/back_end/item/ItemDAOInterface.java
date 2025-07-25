@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import java.util.List;
 
 /**
@@ -13,18 +13,18 @@ import java.util.List;
  */
 public interface ItemDAOInterface {
 
-    public List<Item> findAll() throws AppException;
+    public List<Item> findAll() throws DatabaseException;
 
-    public Item findById(int id) throws AppException;
+    public Item findById(int id) throws DatabaseException;
 
-    public Item create(Item item) throws AppException;
+    public Item create(Item item) throws DatabaseException;
 
-    public Item update(int id, Item item) throws AppException;
+    public Item update(int id, Item item) throws DatabaseException;
 
-    public void delete(int id) throws AppException;
+    public void delete(int id) throws DatabaseException;
 
-    public double getPriceById(int itemId) throws AppException;
+    public double getPriceById(int itemId) throws DatabaseException;
 
-    public boolean exists(int itemId) throws AppException;
+    public boolean exists(int itemId) throws DatabaseException;
 
 }

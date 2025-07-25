@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ItemDAO implements ItemDAOInterface {
 
     @Override
-    public List<Item> findAll() throws AppException {
+    public List<Item> findAll() throws DatabaseException {
         String sql = "SELECT * FROM items";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -32,12 +32,12 @@ public class ItemDAO implements ItemDAOInterface {
             }
             return list;
         } catch (SQLException e) {
-            throw new AppException("Error fetching items", e);
+            throw new DatabaseException("Error fetching items", e);
         }
     }
 
     @Override
-    public Item findById(int id) throws AppException {
+    public Item findById(int id) throws DatabaseException {
         String sql = "SELECT * FROM items WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -53,12 +53,12 @@ public class ItemDAO implements ItemDAOInterface {
             }
             return null;
         } catch (SQLException e) {
-            throw new AppException("Error fetching item", e);
+            throw new DatabaseException("Error fetching item", e);
         }
     }
 
     @Override
-    public Item create(Item item) throws AppException {
+    public Item create(Item item) throws DatabaseException {
         String sql = "INSERT INTO items (name, price, stock) VALUES (?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -73,14 +73,14 @@ public class ItemDAO implements ItemDAOInterface {
                 item.setId(keys.getInt(1));
                 return item;
             }
-            throw new AppException("Item creation failed: no ID returned.");
+            throw new DatabaseException("Item creation failed: no ID returned.");
         } catch (SQLException e) {
-            throw new AppException("Error creating item", e);
+            throw new DatabaseException("Error creating item", e);
         }
     }
 
     @Override
-    public Item update(int id, Item item) throws AppException {
+    public Item update(int id, Item item) throws DatabaseException {
         String sql = "UPDATE items SET name=?, price=?, stock=? WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -96,24 +96,24 @@ public class ItemDAO implements ItemDAOInterface {
             }
             return null;
         } catch (SQLException e) {
-            throw new AppException("Error updating item", e);
+            throw new DatabaseException("Error updating item", e);
         }
     }
 
     @Override
-    public void delete(int id) throws AppException {
+    public void delete(int id) throws DatabaseException {
         String sql = "DELETE FROM items WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new AppException("Error deleting item", e);
+            throw new DatabaseException("Error deleting item", e);
         }
     }
 
     @Override
-    public double getPriceById(int itemId) throws AppException {
+    public double getPriceById(int itemId) throws DatabaseException {
         String sql = "SELECT price FROM items WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, itemId);
@@ -121,20 +121,20 @@ public class ItemDAO implements ItemDAOInterface {
             if (rs.next()) {
                 return rs.getDouble("price");
             }
-            throw new AppException("Item not found: " + itemId);
+            throw new DatabaseException("Item not found: " + itemId);
         } catch (SQLException e) {
-            throw new AppException("Error fetching item price", e);
+            throw new DatabaseException("Error fetching item price", e);
         }
     }
 
     @Override
-    public boolean exists(int itemId) throws AppException {
+    public boolean exists(int itemId) throws DatabaseException {
         String sql = "SELECT 1 FROM items WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, itemId);
             return ps.executeQuery().next();
         } catch (SQLException e) {
-            throw new AppException("Item exists check error", e);
+            throw new DatabaseException("Item exists check error", e);
         }
     }
 }
