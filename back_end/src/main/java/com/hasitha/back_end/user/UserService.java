@@ -44,6 +44,26 @@ public class UserService {
     // ----------- CREATE USER -----------
     public User create(User user) throws DatabaseException, ValidationException {
 
+        if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
+            throw new ValidationException("First name can not be empty");
+        }
+
+        if (user.getLastName() == null || user.getLastName().equalsIgnoreCase("")) {
+            throw new ValidationException("Last name can not be empty");
+        }
+
+        if (user.getUserName() == null || user.getUserName().equalsIgnoreCase("")) {
+            throw new ValidationException("User name can not be empty");
+        }
+
+        if (user.getPassword() == null || user.getPassword().equalsIgnoreCase("")) {
+            throw new ValidationException("Password can not be empty");
+        }
+
+        if (user.getRole() == null || user.getRole().equalsIgnoreCase("")) {
+            throw new ValidationException("User role can not be empty");
+        }
+
         User createdUser = userDao.create(user);
 
         return createdUser;
