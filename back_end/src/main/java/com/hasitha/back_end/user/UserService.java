@@ -42,7 +42,7 @@ public class UserService {
     }
 
     // ----------- CREATE USER -----------
-    public User create(User user) throws DatabaseException, ValidationException, NotFoundException {
+    public User create(User user) throws DatabaseException, ValidationException {
 
         User createdUser = userDao.create(user);
 

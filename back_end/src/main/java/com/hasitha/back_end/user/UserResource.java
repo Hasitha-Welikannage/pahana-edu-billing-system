@@ -4,7 +4,9 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
+import com.hasitha.back_end.exceptions.NotFoundException;
+import com.hasitha.back_end.exceptions.ValidationException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -17,31 +19,44 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
 
-    UserDAOInterface userDao = new UserDAO();
+    UserService userService = new UserService();
 
     // ----------- GET ALL USERS -----------
     @GET
     public Response all() {
         try {
-            List<User> list = userDao.findAll();
-            if (list == null || list.isEmpty()) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Users not found")
-                        .build();
-            }
-            return Response.ok(list).build();
-        } catch (AppException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error fetching users: " + ex.getMessage())
+
+            List<User> list = userService.findAll();
+
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(list)
+                    .build();
+
+        } catch (DatabaseException e) {
+
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (ValidationException e) {
+
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (NotFoundException e) {
+
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
                     .build();
         }
     }
@@ -51,16 +66,32 @@ public class UserResource {
     @Path("/{id}")
     public Response getUser(@PathParam("id") int id) {
         try {
-            User user = userDao.findById(id);
-            if (user == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("User not found")
-                        .build();
-            }
-            return Response.ok(user).build();
-        } catch (AppException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error fetching user: " + e.getMessage())
+            User user = userService.findById(id);
+
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(user)
+                    .build();
+
+        } catch (DatabaseException e) {
+
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (ValidationException e) {
+
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (NotFoundException e) {
+
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
                     .build();
         }
     }
@@ -69,14 +100,28 @@ public class UserResource {
     @POST
     public Response createUser(User user) {
         try {
-            User createdUser = userDao.create(user);
-            return Response.status(Response.Status.CREATED)
+
+            User createdUser = userService.create(user);
+
+            return Response
+                    .status(Response.Status.CREATED)
                     .entity(createdUser)
                     .build();
-        } catch (AppException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error creating user: " + e.getMessage()+"\n" + e.getCause())
+
+        } catch (DatabaseException e) {
+
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
                     .build();
+
+        } catch (ValidationException e) {
+
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+
         }
     }
 
@@ -85,17 +130,34 @@ public class UserResource {
     @Path("/{id}")
     public Response updateUser(@PathParam("id") int id, User user) {
         try {
-            User updatedUser = userDao.update(id, user);
-            if (updatedUser == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("User not found")
-                        .build();
-            }
-            return Response.ok(updatedUser).build();
-        } catch (AppException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error updating user: " + e.getMessage())
+            User updatedUser = userService.update(id, user);
+
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(updatedUser)
                     .build();
+
+        } catch (DatabaseException e) {
+
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (ValidationException e) {
+
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (NotFoundException e) {
+
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+
         }
     }
 
@@ -104,18 +166,32 @@ public class UserResource {
     @Path("/{id}")
     public Response deleteUser(@PathParam("id") int id) {
         try {
-            User user = userDao.findById(id);
-            if (user == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("User not found")
-                        .build();
-            }
 
-            userDao.delete(id);
-            return Response.noContent().build();
-        } catch (AppException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error deleting user: " + e.getMessage())
+            userService.delete(id);
+
+            return Response
+                    .status(Response.Status.NO_CONTENT)
+                    .build();
+
+        } catch (DatabaseException e) {
+
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (ValidationException e) {
+
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+
+        } catch (NotFoundException e) {
+
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
                     .build();
         }
     }
