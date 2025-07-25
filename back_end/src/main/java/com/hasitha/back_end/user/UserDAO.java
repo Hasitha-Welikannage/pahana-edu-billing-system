@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.Connection;
@@ -24,10 +23,12 @@ public class UserDAO implements UserDAOInterface {
     /**
      *
      * @return @throws AppException
-     * @throws com.hasitha.back_end.exceptions.AppException
+     * @throws com.hasitha.back_end.exceptions.DatabaseException
      */
+    
+    // ----------- GET ALL USERS -----------
     @Override
-    public List<User> findAll() throws AppException {
+    public List<User> findAll() throws DatabaseException {
         String sql = "SELECT * FROM users";
         try (Connection c = DBConnection.getConnection()) {
 
@@ -48,12 +49,13 @@ public class UserDAO implements UserDAOInterface {
             return list;
         } catch (SQLException ex) {
 
-            throw new AppException("Database error while fetching users", ex);
+            throw new DatabaseException("Database error while fetching users", ex);
         }
     }
-
+    
+    // ----------- GET USER BY ID -----------
     @Override
-    public User findById(int id) throws AppException {
+    public User findById(int id) throws DatabaseException {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
 
@@ -77,12 +79,13 @@ public class UserDAO implements UserDAOInterface {
 
         } catch (SQLException ex) {
 
-            throw new AppException("Database error while fetching users", ex);
+            throw new DatabaseException("Database error while fetching users", ex);
         }
     }
 
+    // ----------- CREATE USER -----------
     @Override
-    public User create(User user) throws AppException {
+    public User create(User user) throws DatabaseException {
         String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?,?, ?)";
 
         try (Connection c = DBConnection.getConnection();) {
@@ -95,25 +98,26 @@ public class UserDAO implements UserDAOInterface {
 
             int affected = ps.executeUpdate();
             if (affected == 0) {
-                throw new AppException("Creating user failed, no rows affected");
+                throw new DatabaseException("Creating user failed, no rows affected");
             }
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
                 user.setId(generatedKeys.getInt(1));
             } else {
-                throw new AppException("Creating user failed, no ID obtained.");
+                throw new DatabaseException("Creating user failed, no ID obtained.");
             }
 
             return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
         } catch (SQLException ex) {
             System.out.println(ex);
-            throw new AppException("Database error while creating user", ex);
+            throw new DatabaseException("Database error while creating user", ex);
         }
     }
 
+    // ----------- UPDATE USER BY ID -----------
     @Override
-    public User update(int id, User user) throws AppException {
+    public User update(int id, User user) throws DatabaseException {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, role = ? WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
             PreparedStatement ps = c.prepareStatement(sql);
@@ -125,27 +129,28 @@ public class UserDAO implements UserDAOInterface {
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new AppException("Updating user failed, no rows affected.");
+                throw new DatabaseException("Updating user failed, no rows affected.");
             }
 
             return findById(id); // return updated user
         } catch (SQLException ex) {
-            throw new AppException("Database error while updating user", ex);
+            throw new DatabaseException("Database error while updating user", ex);
         }
     }
-
+    
+    // ----------- DELETE USER BY ID -----------
     @Override
-    public void delete(int id) throws AppException {
+    public void delete(int id) throws DatabaseException {
         String sql = "DELETE FROM users WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
             PreparedStatement ps = c.prepareStatement(sql);
             ps.setInt(1, id);
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new AppException("Deleting user failed, no rows affected.");
+                throw new DatabaseException("Deleting user failed, no rows affected.");
             }
         } catch (SQLException ex) {
-            throw new AppException("Database error while deleting user", ex);
+            throw new DatabaseException("Database error while deleting user", ex);
         }
     }
 

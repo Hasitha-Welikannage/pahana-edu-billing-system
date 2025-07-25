@@ -13,4 +13,8 @@ public class DatabaseException extends AppException {
     public DatabaseException(String m, Throwable c) {
         super(m, c);
     }
+    
+    public DatabaseException(String m) {
+        super(m);
+    }
 }
