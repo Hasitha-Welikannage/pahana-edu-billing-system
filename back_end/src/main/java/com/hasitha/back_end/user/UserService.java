@@ -78,6 +78,26 @@ public class UserService {
             throw new NotFoundException("User not found");
         }
 
+        if (userUpdate.getFirstName() == null || userUpdate.getFirstName().equalsIgnoreCase("")) {
+            throw new ValidationException("First name can not be empty");
+        }
+
+        if (userUpdate.getLastName() == null || userUpdate.getLastName().equalsIgnoreCase("")) {
+            throw new ValidationException("Last name can not be empty");
+        }
+
+        if (userUpdate.getUserName() == null || userUpdate.getUserName().equalsIgnoreCase("")) {
+            throw new ValidationException("User name can not be empty");
+        }
+
+        if (userUpdate.getPassword() == null || userUpdate.getPassword().equalsIgnoreCase("")) {
+            throw new ValidationException("Password can not be empty");
+        }
+
+        if (userUpdate.getRole() == null || userUpdate.getRole().equalsIgnoreCase("")) {
+            throw new ValidationException("User role can not be empty");
+        }
+
         User updatedUser = userDao.update(id, userUpdate);
 
         return updatedUser;
