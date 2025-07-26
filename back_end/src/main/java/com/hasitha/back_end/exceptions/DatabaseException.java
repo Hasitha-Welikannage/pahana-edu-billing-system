@@ -12,11 +12,11 @@ public class DatabaseException extends AppException {
 
     public DatabaseException(String m, Throwable c) {
 
-        super("Database Error: " + m, c);
+        super(m, c);
     }
 
     public DatabaseException(String m) {
 
-        super("Database Error: " + m);
+        super(m);
     }
 }

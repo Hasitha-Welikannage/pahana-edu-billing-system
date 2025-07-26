@@ -5,8 +5,11 @@
 package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.DatabaseException;
+import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
+import com.hasitha.back_end.response.ApiResponse;
+import com.hasitha.back_end.response.ErrorResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -25,6 +28,8 @@ import java.util.List;
 public class UserResource {
 
     UserService userService = new UserService();
+    ApiResponse apiResponse;
+    ErrorResponse errorResponse;
 
     // ----------- GET ALL USERS -----------
     @GET
@@ -33,30 +38,38 @@ public class UserResource {
 
             List<User> list = userService.findAll();
 
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, list);
+
             return Response
                     .status(Response.Status.OK)
-                    .entity(list)
+                    .entity(apiResponse)
                     .build();
 
         } catch (DatabaseException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (ValidationException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (NotFoundException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
         }
     }
@@ -68,30 +81,38 @@ public class UserResource {
         try {
             User user = userService.findById(id);
 
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, user);
+
             return Response
                     .status(Response.Status.OK)
-                    .entity(user)
+                    .entity(apiResponse)
                     .build();
 
         } catch (DatabaseException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (ValidationException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (NotFoundException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
         }
     }
@@ -103,23 +124,29 @@ public class UserResource {
 
             User createdUser = userService.create(user);
 
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdUser);
+
             return Response
                     .status(Response.Status.CREATED)
-                    .entity(createdUser)
+                    .entity(apiResponse)
                     .build();
 
         } catch (DatabaseException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (ValidationException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         }
@@ -132,30 +159,38 @@ public class UserResource {
         try {
             User updatedUser = userService.update(id, user);
 
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedUser);
+
             return Response
                     .status(Response.Status.OK)
-                    .entity(updatedUser)
+                    .entity(apiResponse)
                     .build();
 
         } catch (DatabaseException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (ValidationException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (NotFoundException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         }
@@ -169,29 +204,38 @@ public class UserResource {
 
             userService.delete(id);
 
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
+
             return Response
                     .status(Response.Status.NO_CONTENT)
+                    .entity(apiResponse)
                     .build();
 
         } catch (DatabaseException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (ValidationException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
 
         } catch (NotFoundException e) {
 
+            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
+
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(e.getMessage())
+                    .entity(errorResponse)
                     .build();
         }
     }

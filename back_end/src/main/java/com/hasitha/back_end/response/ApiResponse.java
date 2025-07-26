@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class ApiResponse<T> {
 
     private boolean success;
+    private String successCode;
     private String message;
     private T data;
     private String timestamp;
@@ -22,8 +23,9 @@ public class ApiResponse<T> {
         this.timestamp = LocalDateTime.now().toString();
     }
 
-    public ApiResponse(boolean success, String message, T data) {
-        this.success = success;
+    public ApiResponse(String successCode, String message, T data) {
+        this.success = true;
+        this.successCode = successCode;
         this.message = message;
         this.data = data;
         this.timestamp = LocalDateTime.now().toString();
@@ -35,6 +37,14 @@ public class ApiResponse<T> {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getSuccessCode() {
+        return successCode;
+    }
+
+    public void setSuccessCode(String successCode) {
+        this.successCode = successCode;
     }
 
     public String getMessage() {
@@ -60,7 +70,5 @@ public class ApiResponse<T> {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
-    
-    
 
 }

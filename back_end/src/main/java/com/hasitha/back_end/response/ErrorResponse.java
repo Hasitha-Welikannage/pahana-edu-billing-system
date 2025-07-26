@@ -12,21 +12,29 @@ import java.time.LocalDateTime;
  */
 public class ErrorResponse {
 
+    private boolean success;
     private String message;
     private String errorCode;
     private Object errors;
-    private String path;
     private String timestamp;
 
     public ErrorResponse() {
     }
-    
-    public ErrorResponse(String message, String errorCode, Object errors, String path) {
+
+    public ErrorResponse(String message, String errorCode, Object errors) {
+        this.success = false;
         this.message = message;
         this.errorCode = errorCode;
         this.errors = errors;
-        this.path = path;
         this.timestamp = LocalDateTime.now().toString();
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {
@@ -51,14 +59,6 @@ public class ErrorResponse {
 
     public void setErrors(Object errors) {
         this.errors = errors;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public String getTimestamp() {

@@ -11,6 +11,6 @@ package com.hasitha.back_end.exceptions;
 public class NotFoundException extends AppException {
 
     public NotFoundException(String m) {
-        super("Not Found Error: " + m);
+        super(m);
     }
 }

@@ -79,7 +79,7 @@ public class UserDAO implements UserDAOInterface {
 
         } catch (SQLException ex) {
 
-            throw new DatabaseException("database error while fetching users", ex);
+            throw new DatabaseException("database error while fetching user", ex);
         }
     }
 
