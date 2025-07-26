@@ -13,6 +13,7 @@ import com.hasitha.back_end.customer.CustomerDAOInterface;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.item.ItemDAO;
 import com.hasitha.back_end.item.ItemDAOInterface;
+import com.hasitha.back_end.item.ItemService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class BillService {
 
-    ItemDAOInterface itemDao = new ItemDAO();
+    ItemService itemService = new ItemService();
     CustomerDAOInterface customerDao = new CustomerDAO();
     BillDAOInterface billDao = new BillDAO();
     BillItemDAOInterface biDao = new BillItemDAO();
@@ -47,11 +48,11 @@ public class BillService {
             if (dto.getQuantity() <= 0) {
                 throw new AppException("Quantity must be >0 for item " + dto.getItemId());
             }
-            if (!itemDao.exists(dto.getItemId())) {
+            if (!itemService.exists(dto.getItemId())) {
                 throw new AppException("Item does not exist: " + dto.getItemId());
             }
 
-            double unitPrice = itemDao.getPriceById(dto.getItemId());
+            double unitPrice = itemService.getPriceById(dto.getItemId());
             double subtotal = unitPrice * dto.getQuantity();
             grandTotal += subtotal;
 
@@ -64,7 +65,7 @@ public class BillService {
 
         // 4. Persist all items
         biDao.saveItems(billHeader.getId(), items);
-        
+
         billHeader.setItems(biDao.findByBillId(billHeader.getId()));
         return billHeader;
     }

@@ -36,34 +36,19 @@ public class AuthResource {
     @POST
     @Path("/login")
     public Response login(LoginRequest request, @Context HttpServletRequest httpRequest) {
-        try {
-            User user = authService.login(request);
-            if (user != null) {
-                httpRequest.getSession(true).setAttribute("user", user);
 
-                apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
+        User user = authService.login(request);
+        if (user != null) {
+            httpRequest.getSession(true).setAttribute("user", user);
 
-                return Response.ok(apiResponse).build();
-            } else {
+            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
 
-                errorResponse = new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.INVALID_CREDENTIALS, null);
+            return Response.ok(apiResponse).build();
+        } else {
 
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(errorResponse)
-                        .build();
-            }
-        } catch (ValidationException e) {
+            errorResponse = new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.INVALID_CREDENTIALS, null);
 
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-        } catch (DatabaseException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+            return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(errorResponse)
                     .build();
         }

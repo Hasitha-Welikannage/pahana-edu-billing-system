@@ -4,12 +4,8 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.exceptions.MessageConstants;
-import com.hasitha.back_end.exceptions.NotFoundException;
-import com.hasitha.back_end.exceptions.ValidationException;
 import com.hasitha.back_end.response.ApiResponse;
-import com.hasitha.back_end.response.ErrorResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -29,214 +25,82 @@ public class UserResource {
 
     UserService userService = new UserService();
     ApiResponse apiResponse;
-    ErrorResponse errorResponse;
-
+    
     // ----------- GET ALL USERS -----------
     @GET
     public Response all() {
-        try {
 
-            List<User> list = userService.findAll();
+        List<User> list = userService.findAll();
 
-            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, list);
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, list);
 
-            return Response
-                    .status(Response.Status.OK)
-                    .entity(apiResponse)
-                    .build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
 
-        } catch (DatabaseException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (ValidationException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (NotFoundException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(errorResponse)
-                    .build();
-        }
     }
 
     // ----------- GET USER BY ID -----------
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") int id) {
-        try {
-            User user = userService.findById(id);
 
-            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, user);
+        User user = userService.findById(id);
 
-            return Response
-                    .status(Response.Status.OK)
-                    .entity(apiResponse)
-                    .build();
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, user);
 
-        } catch (DatabaseException e) {
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
 
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (ValidationException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (NotFoundException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(errorResponse)
-                    .build();
-        }
     }
 
     // ----------- CREATE USER -----------
     @POST
     public Response createUser(User user) {
-        try {
 
-            User createdUser = userService.create(user);
+        User createdUser = userService.create(user);
 
-            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdUser);
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdUser);
 
-            return Response
-                    .status(Response.Status.CREATED)
-                    .entity(apiResponse)
-                    .build();
+        return Response
+                .status(Response.Status.CREATED)
+                .entity(apiResponse)
+                .build();
 
-        } catch (DatabaseException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (ValidationException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-
-        }
     }
 
     // ----------- UPDATE USER BY ID -----------
     @PUT
     @Path("/{id}")
     public Response updateUser(@PathParam("id") int id, User user) {
-        try {
-            User updatedUser = userService.update(id, user);
 
-            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedUser);
+        User updatedUser = userService.update(id, user);
 
-            return Response
-                    .status(Response.Status.OK)
-                    .entity(apiResponse)
-                    .build();
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedUser);
 
-        } catch (DatabaseException e) {
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
 
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (ValidationException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (NotFoundException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(errorResponse)
-                    .build();
-
-        }
     }
 
     // ----------- DELETE USER BY ID -----------
     @DELETE
     @Path("/{id}")
     public Response deleteUser(@PathParam("id") int id) {
-        try {
 
-            userService.delete(id);
+        userService.delete(id);
 
-            apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
 
-            return Response
-                    .status(Response.Status.NO_CONTENT)
-                    .entity(apiResponse)
-                    .build();
+        return Response
+                .status(Response.Status.NO_CONTENT)
+                .entity(apiResponse)
+                .build();
 
-        } catch (DatabaseException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (ValidationException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .build();
-
-        } catch (NotFoundException e) {
-
-            errorResponse = new ErrorResponse(MessageConstants.NOT_FOUND_CODE, e.getMessage(), null);
-
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(errorResponse)
-                    .build();
-        }
     }
 }

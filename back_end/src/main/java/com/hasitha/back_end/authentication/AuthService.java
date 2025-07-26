@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.authentication;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import com.hasitha.back_end.user.User;
 import com.hasitha.back_end.user.UserDAO;
@@ -18,7 +17,7 @@ public class AuthService {
 
     private final UserDAOInterface userDao = new UserDAO();
 
-    public User login(LoginRequest request) throws ValidationException,DatabaseException {
+    public User login(LoginRequest request) {
 
         if (request.getUsername() == null || request.getUsername().equalsIgnoreCase("")) {
             throw new ValidationException("Username can not be empty");

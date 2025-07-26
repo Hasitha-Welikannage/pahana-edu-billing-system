@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
@@ -19,7 +18,7 @@ public class UserService {
     UserDAOInterface userDao = new UserDAO();
 
     // ----------- GET ALL USERS -----------
-    public List<User> findAll() throws DatabaseException, ValidationException, NotFoundException {
+    public List<User> findAll() {
 
         List<User> userList = userDao.findAll();
 
@@ -31,7 +30,7 @@ public class UserService {
     }
 
     // ----------- GET USER BY ID -----------
-    public User findById(int id) throws DatabaseException, ValidationException, NotFoundException {
+    public User findById(int id) {
 
         User user = userDao.findById(id);
 
@@ -43,7 +42,7 @@ public class UserService {
     }
 
     // ----------- CREATE USER -----------
-    public User create(User user) throws DatabaseException, ValidationException {
+    public User create(User user) {
 
         if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
             throw new ValidationException("first name can not be empty");
@@ -65,7 +64,6 @@ public class UserService {
             throw new ValidationException("user role can not be empty");
         }
 
-        
         if (userDao.findByUsername(user.getUserName()) != null) {
             throw new ValidationException(MessageConstants.USERNAME_EXISTS);
         }
@@ -76,7 +74,7 @@ public class UserService {
     }
 
     // ----------- UPDATE USER BY ID -----------
-    public User update(int id, User userUpdate) throws DatabaseException, ValidationException, NotFoundException {
+    public User update(int id, User userUpdate) {
 
         User user = userDao.findById(id);
 
@@ -110,7 +108,7 @@ public class UserService {
     }
 
     // ----------- DELETE USER BY ID -----------
-    public void delete(int id) throws DatabaseException, ValidationException, NotFoundException {
+    public void delete(int id) {
 
         User user = userDao.findById(id);
 
