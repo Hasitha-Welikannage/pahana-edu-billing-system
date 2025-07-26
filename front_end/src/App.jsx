@@ -1,12 +1,12 @@
-import { Routes, Route } from "react-router-dom";
-import "./App.css";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <main className="main-container">
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Navigate to="/login" replace/>} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </main>
   );
