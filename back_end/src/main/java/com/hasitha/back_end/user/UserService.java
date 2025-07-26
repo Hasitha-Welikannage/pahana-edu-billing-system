@@ -5,6 +5,7 @@
 package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.DatabaseException;
+import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
@@ -62,6 +63,11 @@ public class UserService {
 
         if (user.getRole() == null || user.getRole().equalsIgnoreCase("")) {
             throw new ValidationException("user role can not be empty");
+        }
+
+        
+        if (userDao.findByUsername(user.getUserName()) != null) {
+            throw new ValidationException(MessageConstants.USERNAME_EXISTS);
         }
 
         User createdUser = userDao.create(user);

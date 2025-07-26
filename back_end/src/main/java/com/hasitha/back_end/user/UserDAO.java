@@ -155,6 +155,29 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
+    public User findByUsername(String username) throws DatabaseException {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, username); // plain text for assignment only
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("username"),
+                        rs.getString("role")
+                );
+            }
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException("error finding user", ex);
+        }
+    }
+    
+    @Override
     public User findByUsernameAndPassword(String username, String password) throws DatabaseException {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {

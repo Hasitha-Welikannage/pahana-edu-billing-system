@@ -23,6 +23,8 @@ public interface UserDAOInterface {
 
     public void delete(int id) throws DatabaseException;
 
+    public User findByUsername(String username) throws DatabaseException;
+
     public User findByUsernameAndPassword(String username, String password) throws DatabaseException;
 
 }
