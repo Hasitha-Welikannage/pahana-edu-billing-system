@@ -5,7 +5,10 @@
 package com.hasitha.back_end.authentication;
 
 import com.hasitha.back_end.exceptions.DatabaseException;
+import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.exceptions.ValidationException;
+import com.hasitha.back_end.response.ApiResponse;
+import com.hasitha.back_end.response.ErrorResponse;
 import com.hasitha.back_end.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
@@ -27,6 +30,8 @@ import jakarta.ws.rs.core.Response;
 public class AuthResource {
 
     private final AuthService authService = new AuthService();
+    ApiResponse apiResponse;
+    ErrorResponse errorResponse;
 
     @POST
     @Path("/login")
@@ -35,19 +40,31 @@ public class AuthResource {
             User user = authService.login(request);
             if (user != null) {
                 httpRequest.getSession(true).setAttribute("user", user);
-                return Response.ok(user).build();
+
+                apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
+
+                return Response.ok(apiResponse).build();
             } else {
+
+                errorResponse = new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.INVALID_CREDENTIALS, null);
+
                 return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Invalid username or password")
+                        .entity(errorResponse)
                         .build();
             }
         } catch (ValidationException e) {
+
+            errorResponse = new ErrorResponse(MessageConstants.VALIDATION_ERROR_CODE, e.getMessage(), null);
+
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Login error: " + e.getMessage())
+                    .entity(errorResponse)
                     .build();
         } catch (DatabaseException e) {
+
+            errorResponse = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
+
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Login error: " + e.getMessage())
+                    .entity(errorResponse)
                     .build();
         }
     }
@@ -56,7 +73,11 @@ public class AuthResource {
     @Path("/logout")
     public Response logout(@Context HttpServletRequest httpRequest) {
         httpRequest.getSession().invalidate();
-        return Response.ok("Logged out successfully").build();
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGOUT_SUCCESS, null);
+
+        return Response.ok(apiResponse).build();
+
     }
 
     @GET
