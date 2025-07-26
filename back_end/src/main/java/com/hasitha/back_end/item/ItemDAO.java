@@ -112,29 +112,4 @@ public class ItemDAO implements ItemDAOInterface {
         }
     }
 
-    @Override
-    public double getPriceById(int itemId) throws DatabaseException {
-        String sql = "SELECT price FROM items WHERE id = ?";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, itemId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble("price");
-            }
-            throw new DatabaseException("Item not found: " + itemId);
-        } catch (SQLException e) {
-            throw new DatabaseException("Error fetching item price", e);
-        }
-    }
-
-    @Override
-    public boolean exists(int itemId) throws DatabaseException {
-        String sql = "SELECT 1 FROM items WHERE id = ?";
-        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, itemId);
-            return ps.executeQuery().next();
-        } catch (SQLException e) {
-            throw new DatabaseException("Item exists check error", e);
-        }
-    }
 }

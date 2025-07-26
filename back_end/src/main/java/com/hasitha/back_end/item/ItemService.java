@@ -33,7 +33,7 @@ public class ItemService {
         Item item = itemDao.findById(id);
 
         if (item == null) {
-            throw new NotFoundException("item can not be found");
+            throw new NotFoundException("Item with ID " + id + " does not exist.");
         }
 
         return item;
@@ -42,30 +42,69 @@ public class ItemService {
 
     public Item create(Item item) throws DatabaseException, ValidationException {
 
-        return null;
+        validateItem(item);
+
+        return itemDao.create(item);
 
     }
 
     public Item update(int id, Item item) throws DatabaseException, ValidationException, NotFoundException {
 
-        return null;
+        if (!exists(id)) {
+            throw new NotFoundException("Item with ID " + id + " does not exist.");
+        }
+
+        validateItem(item);
+        item.setId(id); // Ensure the ID is consistent
+
+        return itemDao.update(id, item);
 
     }
 
     public void delete(int id) throws DatabaseException, NotFoundException {
 
+        if (!exists(id)) {
+            throw new NotFoundException("Item with ID " + id + " does not exist.");
+        }
+
+        itemDao.delete(id);
     }
 
     public double getPriceById(int itemId) throws DatabaseException, NotFoundException {
 
-        return 0;
+        Item item = itemDao.findById(itemId);
+
+        if (item == null) {
+            throw new NotFoundException("Item with ID " + itemId + " not found.");
+        }
+
+        return item.getUnitPrice(); // Assumes `getPrice()` exists in Item
 
     }
 
     public boolean exists(int itemId) throws DatabaseException, NotFoundException {
 
-        return false;
+        Item item = itemDao.findById(itemId);
+        return item != null;
 
+    }
+
+    private void validateItem(Item item) throws ValidationException {
+        if (item == null) {
+            throw new ValidationException("Item cannot be null.");
+        }
+
+        if (item.getName() == null || item.getName().trim().isEmpty()) {
+            throw new ValidationException("Item name is required.");
+        }
+
+        if (item.getUnitPrice() == 0) {
+            throw new ValidationException("Item price cannot be zero.");
+        }
+
+        if (item.getUnitPrice() < 0) {
+            throw new ValidationException("Item price cannot be negative.");
+        }
     }
 
 }

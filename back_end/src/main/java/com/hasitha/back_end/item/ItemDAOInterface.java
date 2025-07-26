@@ -23,8 +23,4 @@ public interface ItemDAOInterface {
 
     public void delete(int id) throws DatabaseException;
 
-    public double getPriceById(int itemId) throws DatabaseException;
-
-    public boolean exists(int itemId) throws DatabaseException;
-
 }

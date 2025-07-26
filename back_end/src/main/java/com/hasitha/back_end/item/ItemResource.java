@@ -1,6 +1,7 @@
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.MessageConstants;
+import com.hasitha.back_end.response.ApiResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -17,7 +18,6 @@ import java.util.List;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author hasithawelikannage
@@ -27,64 +27,51 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ItemResource {
 
-    private final ItemDAOInterface dao = new ItemDAO();
+    ItemService itemService = new ItemService();
 
     @GET
     public Response getAll() {
-        try {
-            List<Item> items = dao.findAll();
-            return Response.ok(items).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Error fetching items").build();
-        }
+        List<Item> items = itemService.findAll();
+        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, items);
+        return Response.ok(apiResponse).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") int id) {
-        try {
-            Item item = dao.findById(id);
-            if (item == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Item not found").build();
-            }
-            return Response.ok(item).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Error fetching item").build();
-        }
+
+        Item item = itemService.findById(id);
+        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, item);
+        return Response.ok(apiResponse).build();
+
     }
 
     @POST
     public Response create(Item item) {
-        try {
-            Item created = dao.create(item);
-            return Response.status(Response.Status.CREATED).entity(created).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Error creating item").build();
-        }
+
+        Item created = itemService.create(item);
+        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, created);
+        return Response.status(Response.Status.CREATED).entity(apiResponse).build();
+
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") int id, Item item) {
-        try {
-            Item updated = dao.update(id, item);
-            if (updated == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Item not found").build();
-            }
-            return Response.ok(updated).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Error updating item" + e.getCause()).build();
-        }
+
+        Item updated = itemService.update(id, item);
+        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updated);
+        return Response.ok(apiResponse).build();
+
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) {
-        try {
-            dao.delete(id);
-            return Response.noContent().build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Error deleting item").build();
-        }
+        
+        itemService.delete(id);
+        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
+        return Response.status(Response.Status.NO_CONTENT).entity(apiResponse).build();
+        
     }
 }
