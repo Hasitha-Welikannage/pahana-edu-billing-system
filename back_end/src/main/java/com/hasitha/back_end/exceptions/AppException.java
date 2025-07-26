@@ -8,7 +8,7 @@ package com.hasitha.back_end.exceptions;
  *
  * @author hasithawelikannage
  */
-public class AppException extends Exception {
+public class AppException extends RuntimeException {
 
     public AppException(String message, Throwable cause) {
         super(message, cause);

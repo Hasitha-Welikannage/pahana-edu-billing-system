@@ -17,7 +17,7 @@ public class ItemService {
 
     ItemDAOInterface itemDao = new ItemDAO();
 
-    public List<Item> findAll() throws DatabaseException, NotFoundException {
+    public List<Item> findAll() {
 
         List<Item> itemList = itemDao.findAll();
 
@@ -28,7 +28,7 @@ public class ItemService {
         return itemList;
     }
 
-    public Item findById(int id) throws DatabaseException, NotFoundException {
+    public Item findById(int id) {
 
         Item item = itemDao.findById(id);
 
@@ -40,7 +40,7 @@ public class ItemService {
 
     }
 
-    public Item create(Item item) throws DatabaseException, ValidationException {
+    public Item create(Item item) {
 
         validateItem(item);
 
@@ -48,7 +48,7 @@ public class ItemService {
 
     }
 
-    public Item update(int id, Item item) throws DatabaseException, ValidationException, NotFoundException {
+    public Item update(int id, Item item) {
 
         if (!exists(id)) {
             throw new NotFoundException("Item with ID " + id + " does not exist.");
@@ -61,7 +61,7 @@ public class ItemService {
 
     }
 
-    public void delete(int id) throws DatabaseException, NotFoundException {
+    public void delete(int id) {
 
         if (!exists(id)) {
             throw new NotFoundException("Item with ID " + id + " does not exist.");
@@ -70,7 +70,7 @@ public class ItemService {
         itemDao.delete(id);
     }
 
-    public double getPriceById(int itemId) throws DatabaseException, NotFoundException {
+    public double getPriceById(int itemId) {
 
         Item item = itemDao.findById(itemId);
 
@@ -82,14 +82,14 @@ public class ItemService {
 
     }
 
-    public boolean exists(int itemId) throws DatabaseException, NotFoundException {
+    public boolean exists(int itemId) {
 
         Item item = itemDao.findById(itemId);
         return item != null;
 
     }
 
-    private void validateItem(Item item) throws ValidationException {
+    private void validateItem(Item item) {
         if (item == null) {
             throw new ValidationException("Item cannot be null.");
         }
