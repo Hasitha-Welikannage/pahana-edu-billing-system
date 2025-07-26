@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;

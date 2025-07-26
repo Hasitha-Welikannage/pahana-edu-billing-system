@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.customer;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CustomerDAO implements CustomerDAOInterface {
 
     @Override
-    public List<Customer> findAll() throws AppException {
+    public List<Customer> findAll() throws DatabaseException {
         String sql = "SELECT * FROM customers";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -33,12 +33,12 @@ public class CustomerDAO implements CustomerDAOInterface {
             }
             return list;
         } catch (SQLException e) {
-            throw new AppException("Error fetching customers", e);
+            throw new DatabaseException("Error fetching customers", e);
         }
     }
 
     @Override
-    public Customer findById(int id) throws AppException {
+    public Customer findById(int id) throws DatabaseException {
         String sql = "SELECT * FROM customers WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -55,12 +55,12 @@ public class CustomerDAO implements CustomerDAOInterface {
             }
             return null;
         } catch (SQLException e) {
-            throw new AppException("Error fetching customer", e);
+            throw new DatabaseException("Error fetching customer", e);
         }
     }
 
     @Override
-    public Customer create(Customer customer) throws AppException {
+    public Customer create(Customer customer) throws DatabaseException {
         String sql = "INSERT INTO customers (first_name, last_name, address, phone) VALUES (?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -76,15 +76,15 @@ public class CustomerDAO implements CustomerDAOInterface {
                 customer.setId(keys.getInt(1));
                 return customer;
             } else {
-                throw new AppException("Creating customer failed, no ID returned.");
+                throw new DatabaseException("Creating customer failed, no ID returned.");
             }
         } catch (SQLException e) {
-            throw new AppException("Error creating customer", e);
+            throw new DatabaseException("Error creating customer", e);
         }
     }
 
     @Override
-    public Customer update(int id, Customer customer) throws AppException {
+    public Customer update(int id, Customer customer) throws DatabaseException {
         String sql = "UPDATE customers SET first_name=?, last_name=?, address=?, phone=? WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -102,12 +102,12 @@ public class CustomerDAO implements CustomerDAOInterface {
                 return null;
             }
         } catch (SQLException e) {
-            throw new AppException("Error updating customer", e);
+            throw new DatabaseException("Error updating customer", e);
         }
     }
 
     @Override
-    public void delete(int id) throws AppException {
+    public void delete(int id) throws DatabaseException {
         String sql = "DELETE FROM customers WHERE id = ?";
         try (
                 Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -115,18 +115,18 @@ public class CustomerDAO implements CustomerDAOInterface {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new AppException("Error deleting customer", e);
+            throw new DatabaseException("Error deleting customer", e);
         }
     }
 
     @Override
-    public boolean exists(int customerId) throws AppException {
+    public boolean exists(int customerId) throws DatabaseException {
         String sql = "SELECT 1 FROM customers WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, customerId);
             return ps.executeQuery().next();
         } catch (SQLException e) {
-            throw new AppException("Customer exists check error", e);
+            throw new DatabaseException("Customer exists check error", e);
         }
     }
 
