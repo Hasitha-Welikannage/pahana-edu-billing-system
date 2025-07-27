@@ -25,10 +25,9 @@ public class UserDAO implements UserDAOInterface {
      * @return @throws AppException
      * @throws com.hasitha.back_end.exceptions.DatabaseException
      */
-    
     // ----------- GET ALL USERS -----------
     @Override
-    public List<User> findAll() throws DatabaseException {
+    public List<User> findAll() {
         String sql = "SELECT * FROM users";
         try (Connection c = DBConnection.getConnection()) {
 
@@ -52,10 +51,10 @@ public class UserDAO implements UserDAOInterface {
             throw new DatabaseException("database error while fetching users", ex);
         }
     }
-    
+
     // ----------- GET USER BY ID -----------
     @Override
-    public User findById(int id) throws DatabaseException {
+    public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
 
@@ -85,7 +84,7 @@ public class UserDAO implements UserDAOInterface {
 
     // ----------- CREATE USER -----------
     @Override
-    public User create(User user) throws DatabaseException {
+    public User create(User user) {
         String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?,?, ?)";
 
         try (Connection c = DBConnection.getConnection();) {
@@ -117,7 +116,7 @@ public class UserDAO implements UserDAOInterface {
 
     // ----------- UPDATE USER BY ID -----------
     @Override
-    public User update(int id, User user) throws DatabaseException {
+    public User update(int id, User user) {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, role = ? WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
             PreparedStatement ps = c.prepareStatement(sql);
@@ -137,10 +136,10 @@ public class UserDAO implements UserDAOInterface {
             throw new DatabaseException("database error while updating user", ex);
         }
     }
-    
+
     // ----------- DELETE USER BY ID -----------
     @Override
-    public void delete(int id) throws DatabaseException {
+    public void delete(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
             PreparedStatement ps = c.prepareStatement(sql);
@@ -155,7 +154,7 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
-    public User findByUsername(String username) throws DatabaseException {
+    public User findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -176,9 +175,9 @@ public class UserDAO implements UserDAOInterface {
             throw new DatabaseException("error finding user", ex);
         }
     }
-    
+
     @Override
-    public User findByUsernameAndPassword(String username, String password) throws DatabaseException {
+    public User findByUsernameAndPassword(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 

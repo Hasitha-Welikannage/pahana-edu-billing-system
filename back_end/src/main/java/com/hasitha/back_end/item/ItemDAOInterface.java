@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.item;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import java.util.List;
 
 /**
@@ -13,14 +12,14 @@ import java.util.List;
  */
 public interface ItemDAOInterface {
 
-    public List<Item> findAll() throws DatabaseException;
+    public List<Item> findAll();
 
-    public Item findById(int id) throws DatabaseException;
+    public Item findById(int id);
 
-    public Item create(Item item) throws DatabaseException;
+    public Item create(Item item);
 
-    public Item update(int id, Item item) throws DatabaseException;
+    public Item update(int id, Item item);
 
-    public void delete(int id) throws DatabaseException;
+    public void delete(int id);
 
 }

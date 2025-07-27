@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.user;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import java.util.List;
 
 /**
@@ -13,18 +12,18 @@ import java.util.List;
  */
 public interface UserDAOInterface {
 
-    public List<User> findAll() throws DatabaseException;
+    public List<User> findAll();
 
-    public User findById(int id) throws DatabaseException;
+    public User findById(int id);
 
-    public User create(User user) throws DatabaseException;
+    public User create(User user);
 
-    public User update(int id, User user) throws DatabaseException;
+    public User update(int id, User user);
 
-    public void delete(int id) throws DatabaseException;
+    public void delete(int id);
 
-    public User findByUsername(String username) throws DatabaseException;
+    public User findByUsername(String username);
 
-    public User findByUsernameAndPassword(String username, String password) throws DatabaseException;
+    public User findByUsernameAndPassword(String username, String password);
 
 }

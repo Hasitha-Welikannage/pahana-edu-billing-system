@@ -17,7 +17,7 @@ import java.util.List;
 public class ItemDAO implements ItemDAOInterface {
 
     @Override
-    public List<Item> findAll() throws DatabaseException {
+    public List<Item> findAll() {
         String sql = "SELECT * FROM items";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -37,7 +37,7 @@ public class ItemDAO implements ItemDAOInterface {
     }
 
     @Override
-    public Item findById(int id) throws DatabaseException {
+    public Item findById(int id) {
         String sql = "SELECT * FROM items WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -58,7 +58,7 @@ public class ItemDAO implements ItemDAOInterface {
     }
 
     @Override
-    public Item create(Item item) throws DatabaseException {
+    public Item create(Item item) {
         String sql = "INSERT INTO items (name, price, stock) VALUES (?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -80,7 +80,7 @@ public class ItemDAO implements ItemDAOInterface {
     }
 
     @Override
-    public Item update(int id, Item item) throws DatabaseException {
+    public Item update(int id, Item item) {
         String sql = "UPDATE items SET name=?, price=?, stock=? WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -101,7 +101,7 @@ public class ItemDAO implements ItemDAOInterface {
     }
 
     @Override
-    public void delete(int id) throws DatabaseException {
+    public void delete(int id) {
         String sql = "DELETE FROM items WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 

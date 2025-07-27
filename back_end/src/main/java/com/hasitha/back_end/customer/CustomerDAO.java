@@ -17,7 +17,7 @@ import java.util.List;
 public class CustomerDAO implements CustomerDAOInterface {
 
     @Override
-    public List<Customer> findAll() throws DatabaseException {
+    public List<Customer> findAll() {
         String sql = "SELECT * FROM customers";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -38,7 +38,7 @@ public class CustomerDAO implements CustomerDAOInterface {
     }
 
     @Override
-    public Customer findById(int id) throws DatabaseException {
+    public Customer findById(int id) {
         String sql = "SELECT * FROM customers WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -60,7 +60,7 @@ public class CustomerDAO implements CustomerDAOInterface {
     }
 
     @Override
-    public Customer create(Customer customer) throws DatabaseException {
+    public Customer create(Customer customer) {
         String sql = "INSERT INTO customers (first_name, last_name, address, phone) VALUES (?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -84,7 +84,7 @@ public class CustomerDAO implements CustomerDAOInterface {
     }
 
     @Override
-    public Customer update(int id, Customer customer) throws DatabaseException {
+    public Customer update(int id, Customer customer) {
         String sql = "UPDATE customers SET first_name=?, last_name=?, address=?, phone=? WHERE id=?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -107,7 +107,7 @@ public class CustomerDAO implements CustomerDAOInterface {
     }
 
     @Override
-    public void delete(int id) throws DatabaseException {
+    public void delete(int id) {
         String sql = "DELETE FROM customers WHERE id = ?";
         try (
                 Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -120,7 +120,7 @@ public class CustomerDAO implements CustomerDAOInterface {
     }
 
     @Override
-    public boolean exists(int customerId) throws DatabaseException {
+    public boolean exists(int customerId) {
         String sql = "SELECT 1 FROM customers WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, customerId);
