@@ -7,10 +7,12 @@ package com.hasitha.back_end.billCreate;
 import com.hasitha.back_end.bill.Bill;
 import com.hasitha.back_end.bill.BillDAO;
 import com.hasitha.back_end.bill.BillDAOInterface;
+import com.hasitha.back_end.bill.BillService;
 import com.hasitha.back_end.billCreate.CreateBillRequest.ItemDTO;
 import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.billItem.BillItemDAO;
 import com.hasitha.back_end.billItem.BillItemDAOInterface;
+import com.hasitha.back_end.billItem.BillItemService;
 import com.hasitha.back_end.customer.CustomerService;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.item.ItemService;
@@ -26,10 +28,13 @@ public class BillCreateService {
 
     ItemService itemService = new ItemService();
     CustomerService customerService = new CustomerService();
+    BillService billService = new BillService();
+    BillItemService billItemService = new BillItemService();
+
     BillDAOInterface billDao = new BillDAO();
     BillItemDAOInterface biDao = new BillItemDAO();
 
-    public Bill createBill(int userId, CreateBillRequest req) throws AppException {
+    public Bill createBill(int userId, CreateBillRequest req) {
 
         // 1. Validate request basics
         if (!customerService.exists(req.getCustomerId())) {
@@ -71,11 +76,11 @@ public class BillCreateService {
     }
     // convenience pass‑throughs
 
-    public List<Bill> getAllBills() throws AppException {
+    public List<Bill> getAllBills() {
         return billDao.findAll();
     }
 
-    public List<BillItem> getItemsForBill(int billId) throws AppException {
+    public List<BillItem> getItemsForBill(int billId) {
         return biDao.findByBillId(billId);
 
     }

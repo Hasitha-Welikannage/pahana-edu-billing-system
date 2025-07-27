@@ -27,7 +27,7 @@ public class BillService {
         List<Bill> list = billDao.findAll();
 
         if (list == null || list.isEmpty()) {
-            throw new ValidationException("bills are not found");
+            throw new ValidationException("bills can not found");
         }
 
         return list;
@@ -38,7 +38,7 @@ public class BillService {
         Bill bill = billDao.findById(id);
 
         if (bill == null) {
-            throw new ValidationException("bill not found");
+            throw new ValidationException("Bill with ID " + id + " does not exist.");
         }
 
         return bill;

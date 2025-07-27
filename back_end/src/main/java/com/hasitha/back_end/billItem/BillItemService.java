@@ -31,7 +31,7 @@ public class BillItemService {
         List<BillItem> billItems = billItemDao.findByBillId(billId);
 
         if (billItems == null || billItems.isEmpty()) {
-            throw new NotFoundException("bill items are not found");
+            throw new NotFoundException("bill items can not found");
         }
 
         return billItems;

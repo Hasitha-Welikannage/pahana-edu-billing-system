@@ -69,21 +69,21 @@ public class ItemService {
         itemDao.delete(id);
     }
 
-    public double getPriceById(int itemId) {
+    public double getPriceById(int id) {
 
-        Item item = itemDao.findById(itemId);
+        Item item = itemDao.findById(id);
 
         if (item == null) {
-            throw new NotFoundException("Item with ID " + itemId + " not found.");
+            throw new NotFoundException("Item with ID " + id + " not found.");
         }
 
         return item.getUnitPrice(); // Assumes `getPrice()` exists in Item
 
     }
 
-    public boolean exists(int itemId) {
+    public boolean exists(int id) {
 
-        Item item = itemDao.findById(itemId);
+        Item item = itemDao.findById(id);
         return item != null;
 
     }
