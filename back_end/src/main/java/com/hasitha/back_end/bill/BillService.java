@@ -8,11 +8,8 @@ import com.hasitha.back_end.bill.CreateBillRequest.ItemDTO;
 import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.billItem.BillItemDAO;
 import com.hasitha.back_end.billItem.BillItemDAOInterface;
-import com.hasitha.back_end.customer.CustomerDAO;
-import com.hasitha.back_end.customer.CustomerDAOInterface;
+import com.hasitha.back_end.customer.CustomerService;
 import com.hasitha.back_end.exceptions.AppException;
-import com.hasitha.back_end.item.ItemDAO;
-import com.hasitha.back_end.item.ItemDAOInterface;
 import com.hasitha.back_end.item.ItemService;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,14 +22,14 @@ import java.util.List;
 public class BillService {
 
     ItemService itemService = new ItemService();
-    CustomerDAOInterface customerDao = new CustomerDAO();
+    CustomerService customerService = new CustomerService();
     BillDAOInterface billDao = new BillDAO();
     BillItemDAOInterface biDao = new BillItemDAO();
 
     public Bill createBill(int userId, CreateBillRequest req) throws AppException {
 
         // 1. Validate request basics
-        if (!customerDao.exists(req.getCustomerId())) {
+        if (!customerService.exists(req.getCustomerId())) {
             throw new AppException("Customer does not exist: " + req.getCustomerId());
         }
 
@@ -46,7 +43,7 @@ public class BillService {
         // 2. Validate each item and calc totals
         for (ItemDTO dto : req.getItems()) {
             if (dto.getQuantity() <= 0) {
-                throw new AppException("Quantity must be >0 for item " + dto.getItemId());
+                throw new AppException("Quantity must be > 0 for item " + dto.getItemId());
             }
             if (!itemService.exists(dto.getItemId())) {
                 throw new AppException("Item does not exist: " + dto.getItemId());

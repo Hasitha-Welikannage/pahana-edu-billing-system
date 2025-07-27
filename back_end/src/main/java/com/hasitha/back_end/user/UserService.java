@@ -79,6 +79,14 @@ public class UserService {
         userDao.delete(id);
     }
 
+    // ----------- CHECK CUSTOMER EXISTS BY ID -----------
+    public boolean exists(int id) {
+
+        User user = userDao.findById(id);
+        return user != null;
+
+    }
+
     // ----------- VALIDATION METHOD -----------
     private void validateUser(User user, boolean isCreate) {
         if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {

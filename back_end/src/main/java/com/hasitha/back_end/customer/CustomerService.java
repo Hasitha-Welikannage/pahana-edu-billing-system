@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.customer;
 
-import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
@@ -17,99 +16,93 @@ public class CustomerService {
 
     CustomerDAOInterface customerDao = new CustomerDAO();
 
-    // ----------- GET ALL USERS -----------
-    public List<User> findAll() {
+    // ----------- GET ALL CUSTOMER -----------
+    public List<Customer> findAll() {
 
-        List<User> userList = userDao.findAll();
+        List<Customer> customerList = customerDao.findAll();
 
-        if (userList == null || userList.isEmpty()) {
-            throw new NotFoundException("users not found");
+        if (customerList == null || customerList.isEmpty()) {
+            throw new NotFoundException("customers not found");
         }
 
-        return userList;
+        return customerList;
     }
 
-    // ----------- GET USER BY ID -----------
-    public User findById(int id) {
+    // ----------- GET CUSTOMER BY ID -----------
+    public Customer findById(int id) {
 
-        User user = userDao.findById(id);
+        Customer customer = customerDao.findById(id);
 
-        if (user == null) {
-            throw new NotFoundException("user not found");
+        if (customer == null) {
+            throw new NotFoundException("customer not found");
         }
 
-        return user;
+        return customer;
     }
 
-    // ----------- CREATE USER -----------
-    public User create(User user) {
+    // ----------- CREATE CUSTOMER -----------
+    public Customer create(Customer customer) {
 
-        validateUser(user, true);
+        validateCustomer(customer);
 
-        User createdUser = userDao.create(user);
+        Customer createdCustomer = customerDao.create(customer);
 
-        return createdUser;
+        return createdCustomer;
     }
 
-    // ----------- UPDATE USER BY ID -----------
-    public User update(int id, User userUpdate) {
+    // ----------- UPDATE CUSTOMER BY ID -----------
+    public Customer update(int id, Customer CustomerUpdate) {
 
-        User user = userDao.findById(id);
+        Customer customer = customerDao.findById(id);
 
-        if (user == null) {
-            throw new NotFoundException("user not found");
+        if (customer == null) {
+            throw new NotFoundException("customer not found");
         }
 
-        validateUser(user, false);
+        validateCustomer(CustomerUpdate);
 
-        User updatedUser = userDao.update(id, userUpdate);
+        Customer updatedCustomer = customerDao.update(id, CustomerUpdate);
 
-        return updatedUser;
+        return updatedCustomer;
     }
 
-    // ----------- DELETE USER BY ID -----------
+    // ----------- DELETE CUSTOMER BY ID -----------
     public void delete(int id) {
 
-        User user = userDao.findById(id);
+        Customer customer = customerDao.findById(id);
 
-        if (user == null) {
-            throw new NotFoundException("user not found");
+        if (customer == null) {
+            throw new NotFoundException("customer not found");
         }
 
-        userDao.delete(id);
+        customerDao.delete(id);
+    }
+    
+    // ----------- CHECK CUSTOMER EXISTS BY ID -----------
+    public boolean exists(int id) {
+
+        Customer customer = customerDao.findById(id);
+        return customer != null;
+
     }
 
     // ----------- VALIDATION METHOD -----------
-    private void validateUser(User user, boolean isCreate) {
-        if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
+    private void validateCustomer(Customer customer) {
+
+        if (customer.getFirstName() == null || customer.getFirstName().equalsIgnoreCase("")) {
             throw new ValidationException("first name can not be empty");
         }
 
-        if (user.getLastName() == null || user.getLastName().equalsIgnoreCase("")) {
+        if (customer.getLastName() == null || customer.getLastName().equalsIgnoreCase("")) {
             throw new ValidationException("last name can not be empty");
         }
 
-        if (user.getUserName() == null || user.getUserName().equalsIgnoreCase("")) {
-            throw new ValidationException("user name can not be empty");
+        if (customer.getPhoneNumber() == null || customer.getPhoneNumber().equalsIgnoreCase("")) {
+            throw new ValidationException("phone number can not be empty");
         }
 
-        if (user.getPassword() == null || user.getPassword().equalsIgnoreCase("")) {
-            throw new ValidationException("password can not be empty");
-        }
-
-        if (user.getRole() == null || user.getRole().equalsIgnoreCase("")) {
-            throw new ValidationException("user role can not be empty");
-        }
-
-        if (isCreate && userDao.findByUsername(user.getUserName()) != null) {
-            throw new ValidationException(MessageConstants.USERNAME_EXISTS);
-        }
-
-        // Check if the new username is used by another user
-        User userWithSameUsername = userDao.findByUsername(user.getUserName());
-
-        if (!isCreate && userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
-            throw new ValidationException(MessageConstants.USERNAME_EXISTS);
+        if (customer.getAddress() == null || customer.getAddress().equalsIgnoreCase("")) {
+            throw new ValidationException("address can not be empty");
         }
 
     }

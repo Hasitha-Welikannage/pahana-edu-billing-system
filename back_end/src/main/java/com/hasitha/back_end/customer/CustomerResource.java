@@ -5,6 +5,8 @@
 package com.hasitha.back_end.customer;
 
 import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.MessageConstants;
+import com.hasitha.back_end.response.ApiResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -26,64 +28,78 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CustomerResource {
 
-    private final CustomerDAOInterface dao = new CustomerDAO();
+    CustomerService customerService = new CustomerService();
+    ApiResponse apiResponse;
 
     @GET
     public Response getAll() {
-        try {
-            List<Customer> customers = dao.findAll();
-            return Response.ok(customers).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Failed to fetch customers").build();
-        }
+
+        List<Customer> list = customerService.findAll();
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, list);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") int id) {
-        try {
-            Customer customer = dao.findById(id);
-            if (customer == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Customer not found").build();
-            }
-            return Response.ok(customer).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Failed to fetch customer").build();
-        }
+
+        Customer customer = customerService.findById(id);
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, customer);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
+
     }
 
     @POST
     public Response create(Customer customer) {
-        try {
-            Customer created = dao.create(customer);
-            return Response.status(Response.Status.CREATED).entity(created).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Failed to create customer").build();
-        }
+
+        Customer createdCustomer = customerService.create(customer);
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdCustomer);
+
+        return Response
+                .status(Response.Status.CREATED)
+                .entity(apiResponse)
+                .build();
+
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") int id, Customer customer) {
-        try {
-            Customer updated = dao.update(id, customer);
-            if (updated == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Customer not found").build();
-            }
-            return Response.ok(updated).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Failed to update customer").build();
-        }
+        
+        Customer updatedCustomer = customerService.update(id, customer);
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedCustomer);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
+
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) {
-        try {
-            dao.delete(id);
-            return Response.noContent().build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Failed to delete customer").build();
-        }
+
+        customerService.delete(id);
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
+
+        return Response
+                .status(Response.Status.NO_CONTENT)
+                .entity(apiResponse)
+                .build();
+
     }
 }
