@@ -4,21 +4,24 @@
  */
 package com.hasitha.back_end.bill;
 
+import com.hasitha.back_end.billItem.BillItemDTO;
 import com.hasitha.back_end.customer.Customer;
 import com.hasitha.back_end.user.User;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author hasithawelikannage
  */
 public class BillDTO {
-    
+
     private int id;
     private Customer customer;
     private User user;
     private Date date;
     private double total;
+    private List<BillItemDTO> billItems;
 
     public BillDTO() {
     }
@@ -29,6 +32,15 @@ public class BillDTO {
         this.user = user;
         this.date = date;
         this.total = total;
+    }
+
+    public BillDTO(int id, Customer customer, User user, Date date, double total, List<BillItemDTO> billItems) {
+        this.id = id;
+        this.customer = customer;
+        this.user = user;
+        this.date = date;
+        this.total = total;
+        this.billItems = billItems;
     }
 
     public int getId() {
@@ -69,6 +81,14 @@ public class BillDTO {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public List<BillItemDTO> getBillItems() {
+        return billItems;
+    }
+
+    public void setBillItems(List<BillItemDTO> billItems) {
+        this.billItems = billItems;
     }
 
 }
