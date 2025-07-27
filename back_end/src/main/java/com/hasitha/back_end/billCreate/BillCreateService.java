@@ -13,9 +13,12 @@ import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.billItem.BillItemDAO;
 import com.hasitha.back_end.billItem.BillItemDAOInterface;
 import com.hasitha.back_end.billItem.BillItemService;
+import com.hasitha.back_end.customer.Customer;
 import com.hasitha.back_end.customer.CustomerService;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.item.ItemService;
+import com.hasitha.back_end.user.User;
+import com.hasitha.back_end.user.UserService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +31,7 @@ public class BillCreateService {
 
     ItemService itemService = new ItemService();
     CustomerService customerService = new CustomerService();
+    UserService userService = new UserService();
     BillService billService = new BillService();
     BillItemService billItemService = new BillItemService();
 
@@ -36,17 +40,14 @@ public class BillCreateService {
 
     public Bill createBill(int userId, CreateBillRequest req) {
 
-        // 1. Validate request basics
-        if (!customerService.exists(req.getCustomerId())) {
-            throw new AppException("Customer does not exist: " + req.getCustomerId());
-        }
-
-        if (req.getItems() == null || req.getItems().isEmpty()) {
-            throw new AppException("Bill must contain at least one item");
-        }
-
         List<BillItem> items = new ArrayList<>();
         double grandTotal = 0;
+        Customer customer = customerService.findById(req.getCustomerId());
+        User user = userService.findById(userId);
+
+        if (req.getItems() == null || req.getItems().isEmpty()) {
+            throw new AppException("bill must contain at least one item");
+        }
 
         // 2. Validate each item and calc totals
         for (ItemDTO dto : req.getItems()) {
