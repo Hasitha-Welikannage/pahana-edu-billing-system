@@ -4,15 +4,7 @@
  */
 package com.hasitha.back_end.bill;
 
-import com.hasitha.back_end.bill.CreateBillRequest.ItemDTO;
-import com.hasitha.back_end.billItem.BillItem;
-import com.hasitha.back_end.billItem.BillItemDAO;
-import com.hasitha.back_end.billItem.BillItemDAOInterface;
-import com.hasitha.back_end.customer.CustomerService;
-import com.hasitha.back_end.exceptions.AppException;
-import com.hasitha.back_end.item.ItemService;
-import java.util.ArrayList;
-import java.util.Date;
+import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
 /**
@@ -21,59 +13,57 @@ import java.util.List;
  */
 public class BillService {
 
-    ItemService itemService = new ItemService();
-    CustomerService customerService = new CustomerService();
-    BillDAOInterface billDao = new BillDAO();
-    BillItemDAOInterface biDao = new BillItemDAO();
+    private final BillDAOInterface billDao = new BillDAO();
 
-    public Bill createBill(int userId, CreateBillRequest req) throws AppException {
+    public Bill createBill(Bill bill) {
 
-        // 1. Validate request basics
-        if (!customerService.exists(req.getCustomerId())) {
-            throw new AppException("Customer does not exist: " + req.getCustomerId());
-        }
+        validateBill(bill);
 
-        if (req.getItems() == null || req.getItems().isEmpty()) {
-            throw new AppException("Bill must contain at least one item");
-        }
-
-        List<BillItem> items = new ArrayList<>();
-        double grandTotal = 0;
-
-        // 2. Validate each item and calc totals
-        for (ItemDTO dto : req.getItems()) {
-            if (dto.getQuantity() <= 0) {
-                throw new AppException("Quantity must be > 0 for item " + dto.getItemId());
-            }
-            if (!itemService.exists(dto.getItemId())) {
-                throw new AppException("Item does not exist: " + dto.getItemId());
-            }
-
-            double unitPrice = itemService.getPriceById(dto.getItemId());
-            double subtotal = unitPrice * dto.getQuantity();
-            grandTotal += subtotal;
-
-            items.add(new BillItem(0, 0, dto.getItemId(), dto.getQuantity(), subtotal));
-        }
-
-        // 3. Persist bill header
-        Bill billHeader = new Bill(0, req.getCustomerId(), userId, new Date(), grandTotal);
-        billHeader = billDao.create(billHeader);
-
-        // 4. Persist all items
-        biDao.saveItems(billHeader.getId(), items);
-
-        billHeader.setItems(biDao.findByBillId(billHeader.getId()));
-        return billHeader;
-    }
-    // convenience pass‑throughs
-
-    public List<Bill> getAllBills() throws AppException {
-        return billDao.findAll();
+        return billDao.create(bill);
     }
 
-    public List<BillItem> getItemsForBill(int billId) throws AppException {
-        return biDao.findByBillId(billId);
+    public List<Bill> getBillList() {
 
+        List<Bill> list = billDao.findAll();
+
+        if (list == null || list.isEmpty()) {
+            throw new ValidationException("bills are not found");
+        }
+
+        return list;
     }
+
+    public Bill gitBillById(int id) {
+
+        Bill bill = billDao.findById(id);
+
+        if (bill == null) {
+            throw new ValidationException("bill not found");
+        }
+
+        return bill;
+    }
+
+    private void validateBill(Bill bill) {
+        if (bill == null) {
+            throw new ValidationException("Bill header cannot be null.");
+        }
+
+        if (bill.getCustomerId() == 0 || bill.getCustomerId() < 0) {
+            throw new ValidationException("customer is required.");
+        }
+
+        if (bill.getUserId() == 0 || bill.getUserId() < 0) {
+            throw new ValidationException("user is required.");
+        }
+
+        if (bill.getTotal() == 0) {
+            throw new ValidationException("total price cannot be zero.");
+        }
+
+        if (bill.getTotal() < 0) {
+            throw new ValidationException("total price cannot be negative.");
+        }
+    }
+
 }

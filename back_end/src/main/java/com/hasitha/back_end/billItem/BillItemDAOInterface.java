@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.billItem;
 
-import com.hasitha.back_end.exceptions.AppException;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  */
 public interface BillItemDAOInterface {
 
-    public void saveItems(int billId,List<BillItem> items) throws AppException;
+    public void saveItems(int billId, List<BillItem> items);
 
-    public List<BillItem> findByBillId(int billId) throws AppException;
+    public List<BillItem> findByBillId(int billId);
 }

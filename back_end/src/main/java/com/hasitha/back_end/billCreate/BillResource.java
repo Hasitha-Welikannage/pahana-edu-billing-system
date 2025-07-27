@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.hasitha.back_end.bill;
+package com.hasitha.back_end.billCreate;
 
+import com.hasitha.back_end.bill.Bill;
 import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.user.User;
@@ -22,7 +23,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BillResource {
 
-    private final BillService svc = new BillService();
+    private final BillCreateService svc = new BillCreateService();
 
     @Context
     private HttpServletRequest request;

@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.bill;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 public class BillDAO implements BillDAOInterface {
 
     @Override
-    public Bill create(Bill bill) throws AppException {
+    public Bill create(Bill bill) {
         String sql = "INSERT INTO bills (customer_id, user_id, bill_date, total) VALUES (?, ?, ?, ?)";
         try (
                 Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -33,16 +33,16 @@ public class BillDAO implements BillDAOInterface {
                 bill.setId(rs.getInt(1));
                 return bill;
             } else {
-                throw new AppException("Failed to get generated bill ID");
+                throw new DatabaseException("Failed to get generated bill ID");
             }
 
         } catch (SQLException e) {
-            throw new AppException("Error creating bill" + e.getMessage(), e);
+            throw new DatabaseException("Error creating bill" + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<Bill> findAll() throws AppException {
+    public List<Bill> findAll() {
         String sql = "SELECT * FROM bills ORDER BY bill_date DESC";
         List<Bill> list = new ArrayList<>();
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -58,13 +58,13 @@ public class BillDAO implements BillDAOInterface {
             }
             return list;
         } catch (SQLException e) {
-            throw new AppException("Error fetching bills", e);
+            throw new DatabaseException("Error fetching bills", e);
         }
 
     }
 
     @Override
-    public Bill findById(int id) throws AppException {
+    public Bill findById(int id) {
         String sql = "SELECT * FROM bills WHERE id = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -81,7 +81,7 @@ public class BillDAO implements BillDAOInterface {
             }
             return null;
         } catch (SQLException e) {
-            throw new AppException("Error fetching bill by id", e);
+            throw new DatabaseException("Error fetching bill by id", e);
         }
     }
 

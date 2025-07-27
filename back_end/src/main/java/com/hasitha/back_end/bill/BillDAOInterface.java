@@ -4,7 +4,6 @@
  */
 package com.hasitha.back_end.bill;
 
-import com.hasitha.back_end.exceptions.AppException;
 import java.util.List;
 
 /**
@@ -13,9 +12,9 @@ import java.util.List;
  */
 public interface BillDAOInterface {
 
-    Bill create(Bill bill) throws AppException;
+    Bill create(Bill bill);
 
-    List<Bill> findAll() throws AppException;
+    List<Bill> findAll();
 
-    Bill findById(int id) throws AppException;
+    Bill findById(int id);
 }

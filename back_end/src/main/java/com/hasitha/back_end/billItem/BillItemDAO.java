@@ -4,7 +4,7 @@
  */
 package com.hasitha.back_end.billItem;
 
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.utils.DBConnection;
 import java.util.List;
 import java.sql.*;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class BillItemDAO implements BillItemDAOInterface {
 
     @Override
-    public void saveItems(int billId, List<BillItem> items) throws AppException {
+    public void saveItems(int billId, List<BillItem> items) {
         String sql = "INSERT INTO bill_items (bill_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -30,12 +30,12 @@ public class BillItemDAO implements BillItemDAOInterface {
             }
             ps.executeBatch();
         } catch (SQLException e) {
-            throw new AppException("Error saving bill items", e);
+            throw new DatabaseException("Error saving bill items", e);
         }
     }
 
     @Override
-    public List<BillItem> findByBillId(int billId) throws AppException {
+    public List<BillItem> findByBillId(int billId) {
         String sql = "SELECT * FROM bill_items WHERE bill_id = ?";
         List<BillItem> items = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class BillItemDAO implements BillItemDAOInterface {
 
             return items;
         } catch (SQLException e) {
-            throw new AppException("Error retrieving bill items", e);
+            throw new DatabaseException("Error retrieving bill items", e);
         }
     }
 
