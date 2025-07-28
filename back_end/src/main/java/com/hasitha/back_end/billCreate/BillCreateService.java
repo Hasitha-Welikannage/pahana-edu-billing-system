@@ -5,17 +5,16 @@
 package com.hasitha.back_end.billCreate;
 
 import com.hasitha.back_end.bill.Bill;
-import com.hasitha.back_end.bill.BillDAO;
-import com.hasitha.back_end.bill.BillDAOInterface;
+import com.hasitha.back_end.bill.BillDTO;
 import com.hasitha.back_end.bill.BillService;
 import com.hasitha.back_end.billCreate.CreateBillRequest.ItemDTO;
 import com.hasitha.back_end.billItem.BillItem;
-import com.hasitha.back_end.billItem.BillItemDAO;
-import com.hasitha.back_end.billItem.BillItemDAOInterface;
+import com.hasitha.back_end.billItem.BillItemDTO;
 import com.hasitha.back_end.billItem.BillItemService;
 import com.hasitha.back_end.customer.Customer;
 import com.hasitha.back_end.customer.CustomerService;
 import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.item.Item;
 import com.hasitha.back_end.item.ItemService;
 import com.hasitha.back_end.user.User;
 import com.hasitha.back_end.user.UserService;
@@ -35,13 +34,11 @@ public class BillCreateService {
     BillService billService = new BillService();
     BillItemService billItemService = new BillItemService();
 
-    BillDAOInterface billDao = new BillDAO();
-    BillItemDAOInterface biDao = new BillItemDAO();
-
-    public Bill createBill(int userId, CreateBillRequest req) {
+    public BillDTO createBill(int userId, CreateBillRequest req) {
 
         List<BillItem> items = new ArrayList<>();
         double grandTotal = 0;
+
         Customer customer = customerService.findById(req.getCustomerId());
         User user = userService.findById(userId);
 
@@ -67,22 +64,35 @@ public class BillCreateService {
 
         // 3. Persist bill header
         Bill billHeader = new Bill(0, req.getCustomerId(), userId, new Date(), grandTotal);
-        billHeader = billDao.create(billHeader);
+        billHeader = billService.createBill(billHeader);
 
         // 4. Persist all items
-        biDao.saveItems(billHeader.getId(), items);
+        billItemService.saveBillItems(billHeader.getId(), items);
 
-        billHeader.setItems(biDao.findByBillId(billHeader.getId()));
-        return billHeader;
+        billHeader.setItems(billItemService.getBillItemsByBillId(billHeader.getId()));
+
+        //Map the data to DTO classes
+        List<BillItemDTO> billItems = new ArrayList();
+
+        for (BillItem item : billHeader.getItems()) {
+
+            Item i = itemService.findById(item.getItemId());
+
+            billItems.add(new BillItemDTO(item.getId(), i.getId(), i.getName(), i.getUnitPrice(), item.getQuantity(), item.getTotalPrice()));
+        }
+
+        BillDTO bill = new BillDTO(billHeader.getId(), customer, user, billHeader.getDate(), billHeader.getTotal(), billItems);
+
+        return bill;
     }
     // convenience pass‑throughs
 
     public List<Bill> getAllBills() {
-        return billDao.findAll();
+        return billService.getBillList();
     }
 
     public List<BillItem> getItemsForBill(int billId) {
-        return biDao.findByBillId(billId);
+        return billItemService.getBillItemsByBillId(billId);
 
     }
 }

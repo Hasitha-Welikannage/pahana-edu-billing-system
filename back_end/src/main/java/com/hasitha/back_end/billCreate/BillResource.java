@@ -4,9 +4,11 @@
  */
 package com.hasitha.back_end.billCreate;
 
-import com.hasitha.back_end.bill.Bill;
+import com.hasitha.back_end.bill.BillDTO;
 import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.MessageConstants;
+import com.hasitha.back_end.response.ApiResponse;
 import com.hasitha.back_end.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
@@ -23,41 +25,45 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BillResource {
 
-    private final BillCreateService svc = new BillCreateService();
+    private final BillCreateService billCreateService = new BillCreateService();
+    ApiResponse apiResponse;
 
     @Context
     private HttpServletRequest request;
 
     /**
      * POST /bills : create new bill
+     *
      * @param req
-     * @return 
+     * @return
      */
     @POST
     public Response createBill(CreateBillRequest req) {
-        try {
-            User user = (User) request.getSession().getAttribute("user");
-            if (user == null) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Login required").build();
-            }
 
-            Bill bill = svc.createBill(user.getId(), req);
-            return Response.status(Response.Status.CREATED).entity(bill).build();
-
-        } catch (AppException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Login required").build();
         }
+
+        BillDTO bill = billCreateService.createBill(user.getId(), req);
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, bill);
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
+
     }
 
     /**
      * GET /bills : list headers only
-     * @return 
+     *
+     * @return
      */
     @GET
     public Response all() {
         try {
-            return Response.ok(svc.getAllBills()).build();
+            return Response.ok(billCreateService.getAllBills()).build();
         } catch (AppException e) {
             return Response.serverError().entity("Could not fetch bills").build();
         }
@@ -65,14 +71,15 @@ public class BillResource {
 
     /**
      * GET /bills/{id}/items : line items for bill
+     *
      * @param billId
-     * @return 
+     * @return
      */
     @GET
     @Path("/{id}/items")
     public Response items(@PathParam("id") int billId) {
         try {
-            List<BillItem> list = svc.getItemsForBill(billId);
+            List<BillItem> list = billCreateService.getItemsForBill(billId);
             return Response.ok(list).build();
         } catch (AppException e) {
             return Response.serverError().entity("Could not fetch items").build();
