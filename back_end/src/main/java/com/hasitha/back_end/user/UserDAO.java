@@ -69,6 +69,7 @@ public class UserDAO implements UserDAOInterface {
                         rs.getString("first_name"),
                         rs.getString("last_name"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("role")
                 );
 

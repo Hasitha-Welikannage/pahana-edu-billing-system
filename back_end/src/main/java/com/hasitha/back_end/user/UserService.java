@@ -60,10 +60,16 @@ public class UserService {
             throw new NotFoundException("user not found");
         }
 
-        validateUser(user, false);
+        if (userUpdate.getPassword() == null || userUpdate.getPassword().equalsIgnoreCase("")) {
+            userUpdate.setPassword(user.getPassword());
+        }
+
+        validateUser(userUpdate, false);
 
         User updatedUser = userDao.update(id, userUpdate);
-
+        
+        updatedUser.setPassword("");
+        
         return updatedUser;
     }
 

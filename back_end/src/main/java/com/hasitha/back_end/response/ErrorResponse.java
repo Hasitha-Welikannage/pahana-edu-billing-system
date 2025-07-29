@@ -21,7 +21,7 @@ public class ErrorResponse {
     public ErrorResponse() {
     }
 
-    public ErrorResponse(String message, String errorCode, Object errors) {
+    public ErrorResponse(String errorCode, String message, Object errors) {
         this.success = false;
         this.message = message;
         this.errorCode = errorCode;

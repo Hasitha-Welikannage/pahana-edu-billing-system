@@ -3,27 +3,27 @@ import { useEffect, useState } from "react";
 import { fetchUsers } from "../../services/user";
 import UserForm from "./UserForm";
 
-export default function UserManagement() {
+function UserManagement() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
 
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
-  useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const res = await fetchUsers();
-        if (!res.success) {
-          setError(res.message);
-        } else {
-          setUsers(res.data);
-        }
-      } catch (err) {
-        setError(err.message);
+  const loadUsers = async () => {
+    try {
+      const res = await fetchUsers();
+      if (!res.success) {
+        setError(res.message);
+      } else {
+        setUsers(res.data);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
+  useEffect(() => {
     loadUsers();
   }, []);
 
@@ -153,6 +153,7 @@ export default function UserManagement() {
             onSave={() => {
               setShowForm(false);
               setEditingUser(null);
+              loadUsers();
               // Reload users after save
             }}
             initialData={editingUser}
@@ -162,3 +163,5 @@ export default function UserManagement() {
     </div>
   );
 }
+
+export default UserManagement;

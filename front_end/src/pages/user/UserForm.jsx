@@ -34,6 +34,34 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
     setFormData((fd) => ({ ...fd, [name]: value }));
   };
 
+  const saveUser = async (formData) => {
+    try {
+      const res = await addUser(formData);
+      if (!res.success) {
+        setError(res.message);
+      } else {
+        onSave();
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const editUser = async (id, formData) => {
+    try {
+      const res = await updateUser(id, formData);
+      console.log(res);
+
+      if (!res.success) {
+        setError(res.message);
+      } else {
+        onSave();
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Simple validation
@@ -48,21 +76,10 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
       try {
         if (initialData) {
           // Edit mode
-          const response = updateUser(initialData.id, formData);
-          if (!response.success) {
-            setError(response.message);
-          } else {
-            onSave();
-          }
+          editUser(initialData.id, formData);
         } else {
           // Add mode
-          const response = addUser(formData);
-          console.log(response);
-          if (!response.success) {
-            setError(response.message);
-          } else {
-            onSave();
-          }
+          saveUser(formData);
         }
       } catch (err) {
         setError(err.message);
