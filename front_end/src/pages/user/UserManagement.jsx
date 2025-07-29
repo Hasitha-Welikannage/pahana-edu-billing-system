@@ -36,7 +36,7 @@ export default function UserManagement() {
               Manage team members and permissions
             </p>
           </div>
-          <button className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+          <button className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors cursor-pointer">
             Add User
           </button>
         </div>
@@ -55,52 +55,58 @@ export default function UserManagement() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                    User
+                    ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    Avatar
+                  </th>
+
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    Username
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
                     Role
                   </th>
+
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-right text-sm font-medium text-gray-500">
-                    Actions
+                    
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-sm">
-                          {user.firstName?.charAt(0)}
-                          {user.lastName?.charAt(0)}
-                        </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            @{user.userName}
-                          </div>
-                        </div>
+                    <td className="px-6 py-4 text-sm text-gray-500 w-[60px]">
+                      {user.id}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 w-[50px]">
+                      <div className="h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-xs">
+                        {user.firstName?.charAt(0)}
+                        {user.lastName?.charAt(0)}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                      {user.firstName} {user.lastName}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {user.userName}
+                    </td>
+                    <td className="px-6 py-4 w-[90px]">
                       <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {user.id}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        <button className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+
+                    <td className="px-6 py-4 text-right w-[170px]">
+                      <div className="flex items-center justify-between ">
+                        <button className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors cursor-pointer">
                           Edit
                         </button>
-                        <button className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors">
+                        <button className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer">
                           Delete
                         </button>
                       </div>

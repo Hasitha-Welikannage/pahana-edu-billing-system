@@ -4,10 +4,10 @@ export async function fetchUsers() {
   try {
     const response = await fetch(BASE_URL);
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to fetch users. Please try again later.");
   }
-  return data;
 }
 
 export async function addUser(userData) {
@@ -18,10 +18,10 @@ export async function addUser(userData) {
       body: JSON.stringify(userData),
     });
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to add user. Please try again later.");
   }
-  return data;
 }
 
 export async function updateUser(id, userData) {
@@ -32,10 +32,10 @@ export async function updateUser(id, userData) {
       body: JSON.stringify(userData),
     });
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to update user. Please try again later.");
   }
-  return data;
 }
 
 export async function deleteUser(id) {
@@ -44,8 +44,8 @@ export async function deleteUser(id) {
       method: "DELETE",
     });
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to delete user. Please try again later.");
   }
-  return data;
 }
