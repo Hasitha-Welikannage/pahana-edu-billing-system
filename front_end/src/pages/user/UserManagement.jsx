@@ -1,6 +1,6 @@
 // src/pages/UserManagement.jsx
 import { useEffect, useState } from "react";
-import { fetchUsers } from "../../services/api";
+import { fetchUsers } from "../../services/user";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -10,9 +10,13 @@ export default function UserManagement() {
     const loadUsers = async () => {
       try {
         const res = await fetchUsers();
-        setUsers(res.data);
+        if (!res.success) {
+          setError(res.message);
+        } else {
+          setUsers(res.data);
+        }
       } catch (err) {
-        setError("Error loading users.");
+        setError(err.message);
       }
     };
 
@@ -25,8 +29,12 @@ export default function UserManagement() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">User Management</h1>
-            <p className="text-gray-600 mt-1">Manage team members and permissions</p>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              User Management
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Manage team members and permissions
+            </p>
           </div>
           <button className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors">
             Add User
@@ -46,10 +54,18 @@ export default function UserManagement() {
             <table className="min-w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">User</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Role</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">ID</th>
-                  <th className="px-6 py-3 text-right text-sm font-medium text-gray-500">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    User
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                    ID
+                  </th>
+                  <th className="px-6 py-3 text-right text-sm font-medium text-gray-500">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -58,13 +74,16 @@ export default function UserManagement() {
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-sm">
-                          {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                          {user.firstName?.charAt(0)}
+                          {user.lastName?.charAt(0)}
                         </div>
                         <div className="ml-3">
                           <div className="text-sm font-medium text-gray-900">
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-500">@{user.userName}</div>
+                          <div className="text-sm text-gray-500">
+                            @{user.userName}
+                          </div>
                         </div>
                       </div>
                     </td>
