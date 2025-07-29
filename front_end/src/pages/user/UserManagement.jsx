@@ -1,7 +1,8 @@
 // src/pages/UserManagement.jsx
 import { useEffect, useState } from "react";
-import { fetchUsers } from "../../services/user";
+import { fetchUsers, deleteUser } from "../../services/user";
 import UserForm from "./UserForm";
+import DeleteConfirm from "./DeleteConfirm";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -9,6 +10,9 @@ function UserManagement() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+
+  const [showDelete, setShowDelete] = useState(false);
+  const [deletingUser, setDeletingUser] = useState(null);
 
   const loadUsers = async () => {
     try {
@@ -37,6 +41,23 @@ function UserManagement() {
   const handleEdit = (user) => {
     setEditingUser(user);
     setShowForm(true);
+  };
+
+  // Delete button clicked
+  const handleDelete = (user) => {
+    setDeletingUser(user);
+    setShowDelete(true);
+  };
+
+    // Confirm deletion
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteUser(deletingUser.id);
+      setShowDelete(false);
+      loadUsers();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -99,8 +120,8 @@ function UserManagement() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 w-[50px]">
                       <div className="h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-xs m-auto">
-                        {user.firstName?.charAt(0)}
-                        {user.lastName?.charAt(0)}
+                        {user.firstName?.charAt(0).toUpperCase()}
+                        {user.lastName?.charAt(0).toUpperCase()}
                       </div>
                     </td>
 
@@ -124,7 +145,10 @@ function UserManagement() {
                         >
                           Edit
                         </button>
-                        <button className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer">
+                        <button
+                          className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                          onClick={() => handleDelete(user)}
+                        >
                           Delete
                         </button>
                       </div>
@@ -145,6 +169,7 @@ function UserManagement() {
             </div>
           )}
         </div>
+
         {/* User Form Modal */}
         {showForm && (
           <UserForm
@@ -159,6 +184,19 @@ function UserManagement() {
             initialData={editingUser}
           />
         )}
+
+        {/* Delete Confirmation Modal */}
+        {showDelete && (
+          <DeleteConfirm
+            isOpen={showDelete}
+            onClose={() => setShowDelete(false)}
+            onConfirm={() => {
+              handleConfirmDelete();
+            }}
+            userName={`${deletingUser.firstName} ${deletingUser.lastName}`}
+          />
+        )}
+
       </div>
     </div>
   );

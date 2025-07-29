@@ -98,7 +98,7 @@ public class UserResource {
         apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
 
         return Response
-                .status(Response.Status.NO_CONTENT)
+                .status(Response.Status.OK)
                 .entity(apiResponse)
                 .build();
 

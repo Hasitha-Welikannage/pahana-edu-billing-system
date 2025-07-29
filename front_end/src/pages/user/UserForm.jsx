@@ -50,8 +50,6 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
   const editUser = async (id, formData) => {
     try {
       const res = await updateUser(id, formData);
-      console.log(res);
-
       if (!res.success) {
         setError(res.message);
       } else {
