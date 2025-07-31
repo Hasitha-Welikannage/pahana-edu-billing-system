@@ -49,12 +49,16 @@ function UserManagement() {
     setShowDelete(true);
   };
 
-    // Confirm deletion
+  // Confirm deletion
   const handleConfirmDelete = async () => {
     try {
-      await deleteUser(deletingUser.id);
-      setShowDelete(false);
-      loadUsers();
+      const res = await deleteUser(deletingUser.id);
+      if (!res.success) {
+        setError(res.message);
+      } else {
+        setShowDelete(false);
+        loadUsers();
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -196,7 +200,6 @@ function UserManagement() {
             userName={`${deletingUser.firstName} ${deletingUser.lastName}`}
           />
         )}
-
       </div>
     </div>
   );
