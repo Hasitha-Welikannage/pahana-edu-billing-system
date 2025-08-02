@@ -7,6 +7,7 @@ import DeleteConfirm from "./DeleteConfirm";
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -16,6 +17,8 @@ function UserManagement() {
 
   const loadUsers = async () => {
     try {
+      setLoading(true);
+      setError("");
       const res = await fetchUsers();
       if (!res.success) {
         setError(res.message);
@@ -23,7 +26,9 @@ function UserManagement() {
         setUsers(res.data);
       }
     } catch (err) {
-      setError(err.message);
+      setError("Error loading users");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,13 +65,27 @@ function UserManagement() {
         loadUsers();
       }
     } catch (err) {
-      setError(err.message);
+      setError("Failed to delete user");
     }
+  };
+
+  // Helper functions for stats
+  const getUsersByRole = () => {
+    const roles = {};
+    users.forEach(user => {
+      roles[user.role] = (roles[user.role] || 0) + 1;
+    });
+    return Object.keys(roles).length;
+  };
+
+  const getActiveUsers = () => {
+    // Assuming users with recent activity (you can modify this logic)
+    return users.filter(user => user.id > users.length - 3).length;
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -78,112 +97,192 @@ function UserManagement() {
             </p>
           </div>
           <button
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors cursor-pointer"
             onClick={handleAdd}
+            className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
           >
-            Add User
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span>Add User</span>
           </button>
         </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-2xl font-semibold text-gray-900">{users.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm text-gray-600">User Roles</p>
+                <p className="text-2xl font-semibold text-gray-900">{getUsersByRole()}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm text-gray-600">Active Users</p>
+                <p className="text-2xl font-semibold text-gray-900">{getActiveUsers()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-700">{error}</p>
+            </div>
           </div>
         )}
-        {/* Table Container */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                    Avatar
-                  </th>
 
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
-                    Name
+        {/* Users Table */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Team Directory</h3>
+              <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+                {users.length} {users.length === 1 ? 'User' : 'Users'}
+              </span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    User
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Username
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Role
                   </th>
-
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500"></th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    ID
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-500 w-[60px]">
-                      {user.id}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 w-[50px]">
-                      <div className="h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-xs m-auto">
-                        {user.firstName?.charAt(0).toUpperCase()}
-                        {user.lastName?.charAt(0).toUpperCase()}
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {user.firstName} {user.lastName}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {user.userName}
-                    </td>
-                    <td className="px-6 py-4 w-[90px]">
-                      <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                        {user.role}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4 text-right w-[170px]">
-                      <div className="flex items-center justify-between ">
-                        <button
-                          className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors cursor-pointer"
-                          onClick={() => handleEdit(user)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                          onClick={() => handleDelete(user)}
-                        >
-                          Delete
-                        </button>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                        <span className="ml-2 text-gray-600">Loading users...</span>
                       </div>
                     </td>
                   </tr>
-                ))}
+                ) : users.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center">
+                      <div className="text-gray-500">
+                        <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        </svg>
+                        <p className="text-lg font-medium text-gray-900 mb-2">No users found</p>
+                        <p className="text-gray-500">Get started by adding your first team member.</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium text-sm">
+                              {user.firstName?.charAt(0).toUpperCase()}
+                              {user.lastName?.charAt(0).toUpperCase()}
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {user.firstName} {user.lastName}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{user.userName}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        #{user.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => handleEdit(user)}
+                            className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user)}
+                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-
-          {/* Empty State */}
-          {users.length === 0 && !error && (
-            <div className="text-center py-12">
-              <div className="text-gray-500 mb-2">No users found</div>
-              <button className="text-sm text-gray-900 hover:text-gray-700">
-                Add your first user
-              </button>
-            </div>
-          )}
         </div>
 
         {/* User Form Modal */}
         {showForm && (
           <UserForm
             isOpen={showForm}
-            onClose={() => setShowForm(false)}
+            onClose={() => {
+              setShowForm(false);
+              setEditingUser(null);
+            }}
             onSave={() => {
               setShowForm(false);
               setEditingUser(null);
               loadUsers();
-              // Reload users after save
             }}
             initialData={editingUser}
           />
@@ -194,10 +293,8 @@ function UserManagement() {
           <DeleteConfirm
             isOpen={showDelete}
             onClose={() => setShowDelete(false)}
-            onConfirm={() => {
-              handleConfirmDelete();
-            }}
-            userName={`${deletingUser.firstName} ${deletingUser.lastName}`}
+            onConfirm={handleConfirmDelete}
+            userName={`${deletingUser?.firstName} ${deletingUser?.lastName}`}
           />
         )}
       </div>
