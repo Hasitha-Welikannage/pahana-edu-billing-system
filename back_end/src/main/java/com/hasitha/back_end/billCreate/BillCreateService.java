@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.hasitha.back_end.billCreate;
 
 import com.hasitha.back_end.bill.Bill;
@@ -22,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 public class BillCreateService {
 
     ItemService itemService = new ItemService();
@@ -46,7 +39,7 @@ public class BillCreateService {
             throw new AppException("bill must contain at least one item");
         }
 
-        // 2. Validate each item and calc totals
+        // 2. Validate each billItem and calc totals
         for (ItemDTO dto : req.getItems()) {
             if (dto.getQuantity() <= 0) {
                 throw new AppException("Quantity must be > 0 for item " + dto.getItemId());
@@ -62,7 +55,7 @@ public class BillCreateService {
             items.add(new BillItem(0, 0, dto.getItemId(), dto.getQuantity(), subtotal));
         }
 
-        // 3. Persist bill header
+        // 3. Persist billDto header
         Bill billHeader = new Bill(0, req.getCustomerId(), userId, new Date(), grandTotal);
         billHeader = billService.createBill(billHeader);
 
@@ -72,27 +65,55 @@ public class BillCreateService {
         billHeader.setItems(billItemService.getBillItemsByBillId(billHeader.getId()));
 
         //Map the data to DTO classes
-        List<BillItemDTO> billItems = new ArrayList();
+        List<BillItemDTO> billItemsDto = new ArrayList();
 
-        for (BillItem item : billHeader.getItems()) {
+        for (BillItem billItem : billHeader.getItems()) {
 
-            Item i = itemService.findById(item.getItemId());
+            Item item = itemService.findById(billItem.getItemId());
 
-            billItems.add(new BillItemDTO(item.getId(), i.getId(), i.getName(), i.getUnitPrice(), item.getQuantity(), item.getTotalPrice()));
+            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getUnitPrice(), billItem.getQuantity(), billItem.getTotalPrice()));
         }
 
-        BillDTO bill = new BillDTO(billHeader.getId(), customer, user, billHeader.getDate(), billHeader.getTotal(), billItems);
+        BillDTO billDto = new BillDTO(billHeader.getId(), customer, user, billHeader.getDate(), billHeader.getTotal(), billItemsDto);
 
-        return bill;
+        return billDto;
     }
     // convenience pass‑throughs
 
-    public List<Bill> getAllBills() {
-        return billService.getBillList();
+    public List<BillDTO> getAllBills() {
+
+        List<Bill> bills = billService.getBillList();
+        List<BillDTO> billDto = new ArrayList();
+        Customer customer;
+        User user;
+
+        for (Bill bill : bills) {
+
+            customer = customerService.findById(bill.getCustomerId());
+            user = userService.findById(bill.getUserId());
+            user.setPassword("");
+
+            billDto.add(new BillDTO(bill.getId(), customer, user, bill.getDate(), bill.getTotal()));
+
+        }
+
+        return billDto;
     }
 
-    public List<BillItem> getItemsForBill(int billId) {
-        return billItemService.getBillItemsByBillId(billId);
+    public List<BillItemDTO> getItemsForBill(int billId) {
+
+        List<BillItem> billItems = billItemService.getBillItemsByBillId(billId);
+        List<BillItemDTO> billItemsDto = new ArrayList();
+
+        for (BillItem billItem : billItems) {
+
+            Item item = itemService.findById(billItem.getItemId());
+
+            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getUnitPrice(), billItem.getQuantity(), billItem.getTotalPrice()));
+
+        }
+
+        return billItemsDto;
 
     }
 }

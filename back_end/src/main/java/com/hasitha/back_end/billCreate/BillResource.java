@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.hasitha.back_end.billCreate;
 
 import com.hasitha.back_end.bill.BillDTO;
 import com.hasitha.back_end.billItem.BillItem;
+import com.hasitha.back_end.billItem.BillItemDTO;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.exceptions.MessageConstants;
 import com.hasitha.back_end.response.ApiResponse;
@@ -16,10 +14,6 @@ import jakarta.ws.rs.core.*;
 
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 @Path("/bills")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -80,7 +74,7 @@ public class BillResource {
     @Path("/{id}/items")
     public Response items(@PathParam("id") int billId) {
         try {
-            List<BillItem> list = billCreateService.getItemsForBill(billId);
+            List<BillItemDTO> list = billCreateService.getItemsForBill(billId);
             return Response.ok(list).build();
         } catch (AppException e) {
             return Response.serverError().entity("Could not fetch items").build();

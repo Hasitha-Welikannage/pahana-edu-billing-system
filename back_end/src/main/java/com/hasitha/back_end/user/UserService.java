@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.user;
 
 import com.hasitha.back_end.exceptions.MessageConstants;
@@ -9,10 +5,6 @@ import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 public class UserService {
 
     UserDAOInterface userDao = new UserDAO();
@@ -67,9 +59,9 @@ public class UserService {
         validateUser(userUpdate, false);
 
         User updatedUser = userDao.update(id, userUpdate);
-        
+
         updatedUser.setPassword("");
-        
+
         return updatedUser;
     }
 
@@ -115,16 +107,19 @@ public class UserService {
             throw new ValidationException("user role can not be empty");
         }
 
-        if (isCreate && userDao.findByUsername(user.getUserName()) != null) {
-            throw new ValidationException(MessageConstants.USERNAME_EXISTS);
+        // Check if this is a create new user or update user
+        if (isCreate) {
+
+            if (userDao.findByUsername(user.getUserName()) != null) {
+                throw new ValidationException(MessageConstants.USERNAME_EXISTS);
+            }
+        } else {
+            // Check if the new username is used by another user
+            User userWithSameUsername = userDao.findByUsername(user.getUserName());
+
+            if (userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
+                throw new ValidationException(MessageConstants.USERNAME_EXISTS);
+            }
         }
-
-        // Check if the new username is used by another user
-        User userWithSameUsername = userDao.findByUsername(user.getUserName());
-
-        if (!isCreate && userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
-            throw new ValidationException(MessageConstants.USERNAME_EXISTS);
-        }
-
     }
 }

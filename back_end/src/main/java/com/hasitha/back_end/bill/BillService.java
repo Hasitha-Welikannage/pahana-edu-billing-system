@@ -33,7 +33,7 @@ public class BillService {
         return list;
     }
 
-    public Bill gitBillById(int id) {
+    public Bill getBillById(int id) {
 
         Bill bill = billDao.findById(id);
 
