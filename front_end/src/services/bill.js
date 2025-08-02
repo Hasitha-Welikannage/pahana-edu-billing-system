@@ -16,3 +16,14 @@ export async function createBill(billData) {
     throw new Error("Failed to create bill. Please try again later.");
   }
 }
+
+export async function getAllBills() {
+  try {
+    const response = await fetch(BASE_URL);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching bills:", error);
+    throw new Error("Failed to fetch bills. Please try again later.");
+  }
+}

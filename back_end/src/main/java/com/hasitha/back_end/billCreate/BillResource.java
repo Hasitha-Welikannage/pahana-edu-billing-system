@@ -1,8 +1,6 @@
-
 package com.hasitha.back_end.billCreate;
 
 import com.hasitha.back_end.bill.BillDTO;
-import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.billItem.BillItemDTO;
 import com.hasitha.back_end.exceptions.AppException;
 import com.hasitha.back_end.exceptions.MessageConstants;
@@ -22,7 +20,6 @@ public class BillResource {
     private final BillCreateService billCreateService = new BillCreateService();
     ApiResponse apiResponse;
 
-
     /**
      * POST /bills : create new bill
      *
@@ -30,12 +27,11 @@ public class BillResource {
      * @return
      */
     @POST
-    public Response createBill(CreateBillRequest req,@Context HttpServletRequest httpRequest) {
+    public Response createBill(CreateBillRequest req, @Context HttpServletRequest httpRequest) {
 
         User user = (User) httpRequest.getSession().getAttribute("user");
-        
-       // System.out.println(httpRequest.getSession().getAttribute("user"));
-        
+
+        // System.out.println(httpRequest.getSession().getAttribute("user"));
         if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Login required").build();
@@ -57,11 +53,15 @@ public class BillResource {
      */
     @GET
     public Response all() {
-        try {
-            return Response.ok(billCreateService.getAllBills()).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Could not fetch bills").build();
-        }
+
+        List<BillDTO> bills = billCreateService.getAllBills();
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, bills);
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
+
     }
 
     /**
@@ -73,11 +73,14 @@ public class BillResource {
     @GET
     @Path("/{id}/items")
     public Response items(@PathParam("id") int billId) {
-        try {
-            List<BillItemDTO> list = billCreateService.getItemsForBill(billId);
-            return Response.ok(list).build();
-        } catch (AppException e) {
-            return Response.serverError().entity("Could not fetch items").build();
-        }
+
+        List<BillItemDTO> billItems = billCreateService.getItemsForBill(billId);
+
+        apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, billItems);
+        return Response
+                .status(Response.Status.OK)
+                .entity(apiResponse)
+                .build();
+
     }
 }
