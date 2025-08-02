@@ -4,9 +4,7 @@
  */
 package com.hasitha.back_end.authentication;
 
-import com.hasitha.back_end.exceptions.DatabaseException;
 import com.hasitha.back_end.exceptions.MessageConstants;
-import com.hasitha.back_end.exceptions.ValidationException;
 import com.hasitha.back_end.response.ApiResponse;
 import com.hasitha.back_end.response.ErrorResponse;
 import com.hasitha.back_end.user.User;
@@ -40,6 +38,8 @@ public class AuthResource {
         User user = authService.login(request);
         if (user != null) {
             httpRequest.getSession(true).setAttribute("user", user);
+            
+           // System.out.println(httpRequest.getSession().getAttribute("user").toString());
 
             apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
 

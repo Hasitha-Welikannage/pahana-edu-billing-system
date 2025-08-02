@@ -28,8 +28,6 @@ public class BillResource {
     private final BillCreateService billCreateService = new BillCreateService();
     ApiResponse apiResponse;
 
-    @Context
-    private HttpServletRequest request;
 
     /**
      * POST /bills : create new bill
@@ -38,9 +36,12 @@ public class BillResource {
      * @return
      */
     @POST
-    public Response createBill(CreateBillRequest req) {
+    public Response createBill(CreateBillRequest req,@Context HttpServletRequest httpRequest) {
 
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) httpRequest.getSession().getAttribute("user");
+        
+       // System.out.println(httpRequest.getSession().getAttribute("user"));
+        
         if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Login required").build();
