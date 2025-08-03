@@ -1,30 +1,42 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
-/**
- *
- * @author hasithawelikannage
- */
 public class DBConnection {
-    
-    private static final String URL = "jdbc:mysql://localhost:3306/pahana_billing?useSSL=false&allowPublicKeyRetrieval=true";
-    private static final String USER = "root";
-    private static final String PASSWORD = "20011010"; // replace if different
+
+    private static Properties properties = new Properties();
+    private static String URL;
+    private static String USER;
+    private static String PASSWORD;
+
+    static {
+        loadProperties();
+    }
+
+    private static void loadProperties() {
+        try (InputStream input = DBConnection.class.getClassLoader()
+                .getResourceAsStream("database.properties")) {
+
+            if (input == null) {
+                throw new RuntimeException("Unable to find database.properties");
+            }
+
+            properties.load(input);
+            URL = properties.getProperty("db.url");
+            USER = properties.getProperty("db.user");
+            PASSWORD = properties.getProperty("db.password");
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load database properties", e);
+        }
+    }
 
     public static Connection getConnection() throws SQLException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 8+
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
-

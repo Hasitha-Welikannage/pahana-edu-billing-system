@@ -1,0 +1,13 @@
+# Database Configuration Template
+# Copy this file to database.properties and update the values
+
+# Database connection URL
+db.url=jdbc:mysql://localhost:3306/your_database_name?useSSL=false&allowPublicKeyRetrieval=true
+
+# Database credentials
+db.user=your_username
+db.password=your_password
+
+# Connection pool settings (optional)
+db.pool.initialSize=5
+db.pool.maxSize=20

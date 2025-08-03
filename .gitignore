@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /back_end/target/
+
+# Database configuration
+src/main/resources/database.properties

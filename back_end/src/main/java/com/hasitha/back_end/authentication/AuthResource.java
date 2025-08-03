@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.authentication;
 
 import com.hasitha.back_end.exceptions.MessageConstants;
@@ -18,10 +14,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-/**
- *
- * @author hasithawelikannage
- */
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,15 +30,16 @@ public class AuthResource {
         User user = authService.login(request);
         if (user != null) {
             httpRequest.getSession(true).setAttribute("user", user);
-            
-           // System.out.println(httpRequest.getSession().getAttribute("user").toString());
+
+            // System.out.println(httpRequest.getSession().getAttribute("user").toString());
 
             apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
 
             return Response.ok(apiResponse).build();
         } else {
 
-            errorResponse = new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.INVALID_CREDENTIALS, null);
+            errorResponse = new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.INVALID_CREDENTIALS,
+                    null);
 
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(errorResponse)
