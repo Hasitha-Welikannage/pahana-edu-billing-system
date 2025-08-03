@@ -20,11 +20,15 @@ public class UserService {
      * @throws NotFoundException if no users are found
      */
     public List<User> findAll() {
+
         List<User> userList = userDao.findAll();
+
         if (userList == null || userList.isEmpty()) {
-            throw new NotFoundException("users not found");
+            throw new NotFoundException("No users found in the system.");
         }
+
         return userList;
+
     }
 
     /**
@@ -35,11 +39,15 @@ public class UserService {
      * @throws NotFoundException if the user is not found
      */
     public User findById(int id) {
+
         User user = userDao.findById(id);
+
         if (user == null) {
-            throw new NotFoundException("user not found");
+            throw new NotFoundException("User with the specified ID " + id + " does not exist.");
         }
+
         return user;
+
     }
 
     /**
@@ -50,8 +58,10 @@ public class UserService {
      * @throws ValidationException if input data is invalid
      */
     public User create(User user) {
+
         validateUser(user, true);
         return userDao.create(user);
+
     }
 
     /**
@@ -64,21 +74,20 @@ public class UserService {
      * @throws ValidationException if the update data is invalid
      */
     public User update(int id, User userUpdate) {
-        User user = userDao.findById(id);
-        if (user == null) {
-            throw new NotFoundException("user not found");
-        }
 
-        if (userUpdate.getPassword() == null || userUpdate.getPassword().equalsIgnoreCase("")) {
-            userUpdate.setPassword(user.getPassword());
-        }
+        ensureUserExists(id);
 
+        String currentPassword = userDao.findPasswordById(id);
+
+        if (userUpdate.getPassword() == null || userUpdate.getPassword().isBlank()) {
+            userUpdate.setPassword(currentPassword);
+        }
+        
+        userUpdate.setId(id);
         validateUser(userUpdate, false);
 
-        User updatedUser = userDao.update(id, userUpdate);
-        updatedUser.setPassword(""); // hide password in response
+        return userDao.update(id, userUpdate);
 
-        return updatedUser;
     }
 
     /**
@@ -88,22 +97,24 @@ public class UserService {
      * @throws NotFoundException if the user is not found
      */
     public void delete(int id) {
-        User user = userDao.findById(id);
-        if (user == null) {
-            throw new NotFoundException("user not found");
-        }
+
+        ensureUserExists(id);
         userDao.delete(id);
+
     }
 
     /**
      * Checks if a user exists by ID.
      *
      * @param id the ID to check
-     * @return true if user exists, false otherwise
+     * @return true if user ensureUserExists, false otherwise
      */
-    public boolean exists(int id) {
-        User user = userDao.findById(id);
-        return user != null;
+    public void ensureUserExists(int id) {
+
+        if (userDao.findById(id) == null) {
+            throw new NotFoundException("User with the specified ID " + id + " does not exist.");
+        }
+
     }
 
     /**
@@ -115,24 +126,24 @@ public class UserService {
      * duplicated
      */
     private void validateUser(User user, boolean isCreate) {
-        if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
-            throw new ValidationException("first name can not be empty");
+        if (user.getFirstName() == null || user.getFirstName().isBlank()) {
+            throw new ValidationException("First name is required and cannot be empty.");
         }
 
-        if (user.getLastName() == null || user.getLastName().equalsIgnoreCase("")) {
-            throw new ValidationException("last name can not be empty");
+        if (user.getLastName() == null || user.getLastName().isBlank()) {
+            throw new ValidationException("Last name is required and cannot be empty.");
         }
 
-        if (user.getUserName() == null || user.getUserName().equalsIgnoreCase("")) {
-            throw new ValidationException("user name can not be empty");
+        if (user.getUserName() == null || user.getUserName().isBlank()) {
+            throw new ValidationException("Username is required and cannot be empty.");
         }
 
-        if (user.getPassword() == null || user.getPassword().equalsIgnoreCase("")) {
-            throw new ValidationException("password can not be empty");
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new ValidationException("Password is required and cannot be empty.");
         }
 
-        if (user.getRole() == null || user.getRole().equalsIgnoreCase("")) {
-            throw new ValidationException("user role can not be empty");
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            throw new ValidationException("User role is required and cannot be empty.");
         }
 
         if (isCreate) {
@@ -140,8 +151,10 @@ public class UserService {
                 throw new ValidationException(MessageConstants.USERNAME_EXISTS);
             }
         } else {
-            User userWithSameUsername = userDao.findByUsername(user.getUserName());
-            if (userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
+
+            // Allow same username if it belongs to the same user (update scenario)
+            User existingUser = userDao.findByUsername(user.getUserName());
+            if (existingUser != null && existingUser.getId() != user.getId()) {
                 throw new ValidationException(MessageConstants.USERNAME_EXISTS);
             }
         }

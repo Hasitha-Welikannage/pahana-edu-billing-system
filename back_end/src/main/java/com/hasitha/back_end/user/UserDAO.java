@@ -53,4 +53,23 @@ public interface UserDAO {
      * @return the user with the specified username, or null if not found
      */
     User findByUsername(String username);
+
+    /**
+     * Retrieves the password for a given user ID.
+     *
+     * @param id the user ID
+     * @return the password string or null if user not found
+     * @throws DatabaseException if a database access error occurs
+     */
+    String findPasswordById(int id);
+
+    /**
+     * Updates the password for a user.
+     *
+     * @param userId the ID of the user
+     * @param newPassword the new password (should be hashed before calling)
+     * @throws DatabaseException if the update fails
+     */
+    void updatePassword(int userId, String newPassword);
+
 }

@@ -24,8 +24,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement(sql);
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+
             ResultSet rs = ps.executeQuery();
             List<User> list = new ArrayList<>();
             while (rs.next()) {
@@ -39,7 +39,7 @@ public class UserDAOImpl implements UserDAO {
             }
             return list;
         } catch (SQLException ex) {
-            throw new DatabaseException("database error while fetching users", ex);
+            throw new DatabaseException("Error fetching all users. " + ex);
         }
     }
 
@@ -53,24 +53,23 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement(sql);
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new User(
                         rs.getInt("id"),
                         rs.getString("first_name"),
                         rs.getString("last_name"),
                         rs.getString("username"),
-                        rs.getString("password"),
                         rs.getString("role"));
             } else {
                 return null;
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("database error while fetching user", ex);
+            throw new DatabaseException("Error fetching user with ID " + id + ". " + ex);
         }
     }
 
@@ -86,8 +85,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User create(User user) {
         String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?, ?, ?)";
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setString(3, user.getUserName());
@@ -96,20 +94,20 @@ public class UserDAOImpl implements UserDAO {
 
             int affected = ps.executeUpdate();
             if (affected == 0) {
-                throw new DatabaseException("creating user failed, no rows affected");
+                throw new DatabaseException("Creating user failed, no rows affected");
             }
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
                 user.setId(generatedKeys.getInt(1));
             } else {
-                throw new DatabaseException("creating user failed, no ID obtained.");
+                throw new DatabaseException("Creating user failed, no ID obtained.");
             }
 
             // Return user without password for security
             return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
         } catch (SQLException ex) {
-            throw new DatabaseException("database error while creating user", ex);
+            throw new DatabaseException("Error creating user. " + ex);
         }
     }
 
@@ -124,23 +122,23 @@ public class UserDAOImpl implements UserDAO {
      */
     @Override
     public User update(int id, User user) {
-        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, role = ? WHERE id = ?";
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement(sql);
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ?, role = ? WHERE id = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setString(3, user.getUserName());
-            ps.setString(4, user.getRole());
-            ps.setInt(5, id);
+            ps.setString(4, user.getPassword());
+            ps.setString(5, user.getRole());
+            ps.setInt(6, id);
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("updating user failed, no rows affected.");
+                throw new DatabaseException("Updating user failed, no rows affected for ID: " + id);
             }
 
             return findById(id); // Return the updated user
         } catch (SQLException ex) {
-            throw new DatabaseException("database error while updating user", ex);
+            throw new DatabaseException("Error updating user with ID " + id + ". " + ex);
         }
     }
 
@@ -154,15 +152,14 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public void delete(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
-        try (Connection c = DBConnection.getConnection()) {
-            PreparedStatement ps = c.prepareStatement(sql);
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
             ps.setInt(1, id);
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("deleting user failed, no rows affected.");
+                throw new DatabaseException("Deleting user failed, no rows affected for ID: " + id);
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("database error while deleting user", ex);
+            throw new DatabaseException("Error deleting user with ID " + id + ". " + ex);
         }
     }
 
@@ -191,7 +188,51 @@ public class UserDAOImpl implements UserDAO {
             }
             return null;
         } catch (SQLException ex) {
-            throw new DatabaseException("error finding user", ex);
+            throw new DatabaseException("Error finding user by username: " + username + ". " + ex);
         }
     }
+
+    /**
+     * Retrieves only the password of the user by their ID.
+     *
+     * @param id the user ID
+     * @return the password string or null if user not found
+     * @throws DatabaseException if a database error occurs
+     */
+    @Override
+    public String findPasswordById(int id) {
+        String sql = "SELECT password FROM users WHERE id = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password");
+                }
+                return null; // user not found
+            }
+
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error fetching password for user ID " + id + ". " + ex);
+        }
+    }
+
+    @Override
+    public void updatePassword(int userId, String newPassword) {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, newPassword);
+            ps.setInt(2, userId);
+
+            int affected = ps.executeUpdate();
+            if (affected == 0) {
+                throw new DatabaseException("Password update failed, no rows affected for user ID: " + userId);
+            }
+
+        } catch (SQLException ex) {
+            throw new DatabaseException("Error updating password for user ID " + userId + ". " + ex);
+        }
+    }
+
 }
