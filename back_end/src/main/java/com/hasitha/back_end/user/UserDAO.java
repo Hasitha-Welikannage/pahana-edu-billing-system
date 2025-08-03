@@ -1,27 +1,56 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.hasitha.back_end.user;
 
 import java.util.List;
 
 /**
- *
- * @author hasithawelikannage
+ * Interface defining data access operations for User entities.
  */
 public interface UserDAO {
 
-    public List<User> findAll();
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return a list of all users
+     */
+    List<User> findAll();
 
-    public User findById(int id);
+    /**
+     * Finds a user by their unique ID.
+     *
+     * @param id the ID of the user to find
+     * @return the user with the given ID, or null if not found
+     */
+    User findById(int id);
 
-    public User create(User user);
+    /**
+     * Creates a new user in the database.
+     *
+     * @param user the user object to create
+     * @return the created user with generated ID (if applicable)
+     */
+    User create(User user);
 
-    public User update(int id, User user);
+    /**
+     * Updates an existing user's information.
+     *
+     * @param id the ID of the user to update
+     * @param user the updated user information
+     * @return the updated user object
+     */
+    User update(int id, User user);
 
-    public void delete(int id);
+    /**
+     * Deletes a user from the database.
+     *
+     * @param id the ID of the user to delete
+     */
+    void delete(int id);
 
-    public User findByUsername(String username);
-
+    /**
+     * Finds a user by their unique username.
+     *
+     * @param username the username to search for
+     * @return the user with the specified username, or null if not found
+     */
+    User findByUsername(String username);
 }

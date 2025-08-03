@@ -5,49 +5,66 @@ import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
+/**
+ * Service layer for managing users. Handles validation and business logic
+ * before delegating to the UserDAO.
+ */
 public class UserService {
 
     UserDAO userDao = new UserDAOImpl();
 
-    // ----------- GET ALL USERS -----------
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return a list of users
+     * @throws NotFoundException if no users are found
+     */
     public List<User> findAll() {
-
         List<User> userList = userDao.findAll();
-
         if (userList == null || userList.isEmpty()) {
             throw new NotFoundException("users not found");
         }
-
         return userList;
     }
 
-    // ----------- GET USER BY ID -----------
+    /**
+     * Retrieves a user by ID.
+     *
+     * @param id the ID of the user
+     * @return the user with the given ID
+     * @throws NotFoundException if the user is not found
+     */
     public User findById(int id) {
-
         User user = userDao.findById(id);
-
         if (user == null) {
             throw new NotFoundException("user not found");
         }
-
         return user;
     }
 
-    // ----------- CREATE USER -----------
+    /**
+     * Creates a new user after validating the input.
+     *
+     * @param user the user to create
+     * @return the created user
+     * @throws ValidationException if input data is invalid
+     */
     public User create(User user) {
-
         validateUser(user, true);
-
-        User createdUser = userDao.create(user);
-
-        return createdUser;
+        return userDao.create(user);
     }
 
-    // ----------- UPDATE USER BY ID -----------
+    /**
+     * Updates an existing user by ID after validation.
+     *
+     * @param id the ID of the user to update
+     * @param userUpdate the updated user data
+     * @return the updated user
+     * @throws NotFoundException if the user is not found
+     * @throws ValidationException if the update data is invalid
+     */
     public User update(int id, User userUpdate) {
-
         User user = userDao.findById(id);
-
         if (user == null) {
             throw new NotFoundException("user not found");
         }
@@ -59,33 +76,44 @@ public class UserService {
         validateUser(userUpdate, false);
 
         User updatedUser = userDao.update(id, userUpdate);
-
-        updatedUser.setPassword("");
+        updatedUser.setPassword(""); // hide password in response
 
         return updatedUser;
     }
 
-    // ----------- DELETE USER BY ID -----------
+    /**
+     * Deletes a user by ID.
+     *
+     * @param id the ID of the user to delete
+     * @throws NotFoundException if the user is not found
+     */
     public void delete(int id) {
-
         User user = userDao.findById(id);
-
         if (user == null) {
             throw new NotFoundException("user not found");
         }
-
         userDao.delete(id);
     }
 
-    // ----------- CHECK CUSTOMER EXISTS BY ID -----------
+    /**
+     * Checks if a user exists by ID.
+     *
+     * @param id the ID to check
+     * @return true if user exists, false otherwise
+     */
     public boolean exists(int id) {
-
         User user = userDao.findById(id);
         return user != null;
-
     }
 
-    // ----------- VALIDATION METHOD -----------
+    /**
+     * Validates the fields of a User object.
+     *
+     * @param user the user to validate
+     * @param isCreate true if creating a new user; false if updating
+     * @throws ValidationException if any field is invalid or username is
+     * duplicated
+     */
     private void validateUser(User user, boolean isCreate) {
         if (user.getFirstName() == null || user.getFirstName().equalsIgnoreCase("")) {
             throw new ValidationException("first name can not be empty");
@@ -107,16 +135,12 @@ public class UserService {
             throw new ValidationException("user role can not be empty");
         }
 
-        // Check if this is a create new user or update user
         if (isCreate) {
-
             if (userDao.findByUsername(user.getUserName()) != null) {
                 throw new ValidationException(MessageConstants.USERNAME_EXISTS);
             }
         } else {
-            // Check if the new username is used by another user
             User userWithSameUsername = userDao.findByUsername(user.getUserName());
-
             if (userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
                 throw new ValidationException(MessageConstants.USERNAME_EXISTS);
             }

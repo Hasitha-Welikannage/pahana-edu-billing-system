@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Access Object for User entities. Handles all database operations related
- * to User management.
+ * Data Access Object implementation for User entities. Handles all database
+ * operations related to user management. Uses JDBC for direct database
+ * interaction.
+ *
+ * Throws {@link DatabaseException} for any database access related errors.
  */
 public class UserDAOImpl implements UserDAO {
 
@@ -22,7 +25,6 @@ public class UserDAOImpl implements UserDAO {
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
         try (Connection c = DBConnection.getConnection()) {
-
             PreparedStatement ps = c.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             List<User> list = new ArrayList<>();
@@ -37,29 +39,26 @@ public class UserDAOImpl implements UserDAO {
             }
             return list;
         } catch (SQLException ex) {
-
             throw new DatabaseException("database error while fetching users", ex);
         }
     }
 
     /**
-     * Finds a user by their ID.
+     * Finds a user by their unique ID.
      *
      * @param id the user ID to search for
-     * @return User if found, null otherwise
+     * @return User if found, or null if no user with the given ID exists
      * @throws DatabaseException if a database access error occurs
      */
     @Override
     public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection c = DBConnection.getConnection()) {
-
             PreparedStatement ps = c.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-
                 return new User(
                         rs.getInt("id"),
                         rs.getString("first_name"),
@@ -67,13 +66,10 @@ public class UserDAOImpl implements UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"));
-
             } else {
                 return null;
             }
-
         } catch (SQLException ex) {
-
             throw new DatabaseException("database error while fetching user", ex);
         }
     }
@@ -81,17 +77,16 @@ public class UserDAOImpl implements UserDAO {
     /**
      * Creates a new user in the database.
      *
-     * @param user the user object to create
-     * @return User object with generated ID
-     * @throws DatabaseException if creation fails or database access error
+     * @param user the User object to create (must not be null)
+     * @return the created User object including generated ID
+     * @throws DatabaseException if creation fails or a database access error
      * occurs
-     * @throws IllegalArgumentException if user is null or has invalid data
+     * @throws IllegalArgumentException if the user parameter is null or invalid
      */
     @Override
     public User create(User user) {
-        String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?,?, ?)";
-
-        try (Connection c = DBConnection.getConnection();) {
+        String sql = "INSERT INTO users (first_name, last_name, username, password, role) VALUES (?, ?, ?, ?, ?)";
+        try (Connection c = DBConnection.getConnection()) {
             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
@@ -111,20 +106,21 @@ public class UserDAOImpl implements UserDAO {
                 throw new DatabaseException("creating user failed, no ID obtained.");
             }
 
+            // Return user without password for security
             return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
         } catch (SQLException ex) {
-            System.out.println(ex);
             throw new DatabaseException("database error while creating user", ex);
         }
     }
 
     /**
-     * Updates an existing user in the database.
+     * Updates an existing user in the database by their ID.
      *
      * @param id the ID of the user to update
-     * @param user the updated user data
-     * @return Updated user object
-     * @throws DatabaseException if update fails or database access error occurs
+     * @param user the User object containing updated data
+     * @return the updated User object retrieved from the database
+     * @throws DatabaseException if update fails or a database access error
+     * occurs
      */
     @Override
     public User update(int id, User user) {
@@ -142,17 +138,17 @@ public class UserDAOImpl implements UserDAO {
                 throw new DatabaseException("updating user failed, no rows affected.");
             }
 
-            return findById(id); // return updated user
+            return findById(id); // Return the updated user
         } catch (SQLException ex) {
             throw new DatabaseException("database error while updating user", ex);
         }
     }
 
     /**
-     * Deletes a user from the database.
+     * Deletes a user from the database by their ID.
      *
      * @param id the ID of the user to delete
-     * @throws DatabaseException if deletion fails or database access error
+     * @throws DatabaseException if deletion fails or a database access error
      * occurs
      */
     @Override
@@ -174,7 +170,7 @@ public class UserDAOImpl implements UserDAO {
      * Finds a user by their username.
      *
      * @param username the username to search for
-     * @return User if found, null otherwise
+     * @return User if found, or null if no user with the given username exists
      * @throws DatabaseException if a database access error occurs
      */
     @Override
@@ -182,7 +178,7 @@ public class UserDAOImpl implements UserDAO {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setString(1, username); // plain text for assignment only
+            ps.setString(1, username); // plain text password (for assignment only)
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -198,5 +194,4 @@ public class UserDAOImpl implements UserDAO {
             throw new DatabaseException("error finding user", ex);
         }
     }
-
 }
