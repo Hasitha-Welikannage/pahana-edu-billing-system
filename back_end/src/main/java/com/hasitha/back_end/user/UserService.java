@@ -7,7 +7,7 @@ import java.util.List;
 
 public class UserService {
 
-    UserDAOInterface userDao = new UserDAO();
+    UserDAO userDao = new UserDAOImpl();
 
     // ----------- GET ALL USERS -----------
     public List<User> findAll() {

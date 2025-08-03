@@ -31,8 +31,6 @@ public class AuthResource {
         if (user != null) {
             httpRequest.getSession(true).setAttribute("user", user);
 
-            // System.out.println(httpRequest.getSession().getAttribute("user").toString());
-
             apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LOGIN_SUCCESS, user);
 
             return Response.ok(apiResponse).build();

@@ -9,13 +9,19 @@ import java.util.Properties;
 
 public class DBConnection {
 
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
     private static String URL;
     private static String USER;
     private static String PASSWORD;
 
     static {
-        loadProperties();
+        try {
+            // Load MySQL driver explicitly
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            loadProperties();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("MySQL JDBC Driver not found", e);
+        }
     }
 
     private static void loadProperties() {

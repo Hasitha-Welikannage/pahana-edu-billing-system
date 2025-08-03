@@ -18,7 +18,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable e) {
-        ErrorResponse error = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, "Unexpected error occurred.", null);
+        ErrorResponse error = new ErrorResponse(MessageConstants.SERVER_ERROR_CODE, e.getMessage(), null);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(error).build();
     }
 }
