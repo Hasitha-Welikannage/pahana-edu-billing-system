@@ -11,7 +11,17 @@ import java.util.List;
  */
 public class UserService {
 
-    UserDAO userDao = new UserDAOImpl();
+    UserDAO userDao;
+
+    // Constructor for injection (used in tests)
+    public UserService(UserDAO userDAO) {
+        this.userDao = userDAO;
+    }
+
+    // Default constructor (used in production)
+    public UserService() {
+        this.userDao = new UserDAOImpl(); // default real DAO
+    }
 
     /**
      * Retrieves all users from the database.
@@ -82,7 +92,7 @@ public class UserService {
         if (userUpdate.getPassword() == null || userUpdate.getPassword().isBlank()) {
             userUpdate.setPassword(currentPassword);
         }
-        
+
         userUpdate.setId(id);
         validateUser(userUpdate, false);
 
