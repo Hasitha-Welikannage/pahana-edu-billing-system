@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { login } from "../../services/auth";
 
 const Login = () => {
-  const [form, setForm] = useState({ username: '', password: '' });
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,28 +12,22 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
 
     try {
-      const response = await fetch('http://localhost:8080/back_end/api/v1/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
 
-      const data = await response.json();
+      const data = await login(form);
 
       if (data.success) {
         setMessage(data.message);
-        sessionStorage.setItem('user', JSON.stringify(data.data)); // store user info
-        window.location.href = '/home'; // navigate to home page
+        sessionStorage.setItem("user", JSON.stringify(data.data)); // store user info
+        window.location.href = "/home"; // navigate to home page
       } else {
-        setError(`${data.errorCode} (Code: ${data.message})`);
+        setError(`${data.message} (Code: ${data.errorCode})`);
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError("Something went wrong. Please try again." + err.message);
     }
   };
 
@@ -42,14 +37,19 @@ const Login = () => {
         <div className="bg-white rounded-lg border border-gray-200 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900">Welcome Back</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Welcome Back
+            </h1>
             <p className="text-gray-600 mt-2">Sign in to your account</p>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Username
               </label>
               <input
@@ -65,7 +65,10 @@ const Login = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <input
@@ -80,7 +83,7 @@ const Login = () => {
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-colors"
             >
@@ -92,8 +95,18 @@ const Login = () => {
           {message && (
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-5 h-5 text-green-400 mr-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className="text-green-700 text-sm">{message}</p>
               </div>
@@ -104,8 +117,18 @@ const Login = () => {
           {error && (
             <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-5 h-5 text-red-400 mr-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className="text-red-700 text-sm">{error}</p>
               </div>

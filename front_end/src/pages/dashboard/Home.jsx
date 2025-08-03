@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { logout } from '../../services/auth'; 
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -10,6 +11,20 @@ const Home = () => {
       navigate('/');
     }
   }, [user, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      const data = await logout();
+      if (data.success) {
+        sessionStorage.removeItem('user');
+        navigate('/');
+      } else {
+        console.error("Logout failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   if (!user) return null;
 
@@ -29,10 +44,7 @@ const Home = () => {
             </div>
             <button 
               className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
-              onClick={() => {
-                sessionStorage.removeItem('user');
-                navigate('/');
-              }}
+              onClick={handleLogout}
             >
               Logout
             </button>
