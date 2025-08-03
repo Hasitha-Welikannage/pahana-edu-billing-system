@@ -20,11 +20,11 @@ export async function logout() {
     const response = await fetch(BASE_URL + "/logout", {
       method: "POST",
     });
-    if (!response.ok) {
-      throw new Error("Logout failed. Please try again later.");
-    }
-    return true;
+    const data = await response.json();
+    return data;
   } catch (error) {
-    throw new Error("Failed to logout. Please try again later.");
+    throw new Error(
+      "Failed to logout. Please try again later." + error.message
+    );
   }
 }
