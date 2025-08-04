@@ -11,7 +11,7 @@ const ItemForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     if (initialData) {
       setName(initialData.name || "");
       setStock(initialData.stock || "");
-      setUnitPrice(initialData.unitPrice || "");
+      setUnitPrice(initialData.price || "");
     } else {
       setName("");
       setStock("");
@@ -21,7 +21,7 @@ const ItemForm = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name, stock: Number(stock), unitPrice: Number(unitPrice) });
+    onSubmit({ name, stock: Number(stock), price: Number(unitPrice) });
   };
 
   if (!isOpen) return null;

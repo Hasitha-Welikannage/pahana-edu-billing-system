@@ -10,10 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
+
 public class BillDAO implements BillDAOInterface {
 
     @Override

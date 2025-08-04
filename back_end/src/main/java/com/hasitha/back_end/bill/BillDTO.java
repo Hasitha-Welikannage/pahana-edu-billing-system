@@ -10,10 +10,7 @@ import com.hasitha.back_end.user.User;
 import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
+
 public class BillDTO {
 
     private int id;

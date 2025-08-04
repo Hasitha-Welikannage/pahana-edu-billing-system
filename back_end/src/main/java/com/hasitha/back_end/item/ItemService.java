@@ -78,7 +78,6 @@ public class ItemService {
     public Item update(int id, Item itemUpdate) {
         ensureItemExists(id);
         validateItem(itemUpdate);
-        itemUpdate.setId(id); // Ensure ID consistency
         return itemDao.update(id, itemUpdate);
     }
 

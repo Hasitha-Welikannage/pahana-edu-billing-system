@@ -8,10 +8,6 @@ import com.hasitha.back_end.billItem.BillItem;
 import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 public class Bill {
 
     private int id;

@@ -7,10 +7,7 @@ package com.hasitha.back_end.bill;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
+
 public class BillService {
 
     private final BillDAOInterface billDao = new BillDAO();

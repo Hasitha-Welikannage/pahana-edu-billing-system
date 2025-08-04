@@ -56,6 +56,7 @@ const ItemManagement = () => {
   };
 
   const handleSubmit = async (data) => {
+    console.log("Submitting item data:", data);
     try {
       if (selectedItem) {
         await updateItem(selectedItem.id, data);
@@ -82,7 +83,7 @@ const ItemManagement = () => {
   };
 
   const getTotalValue = () => {
-    return items.reduce((total, item) => total + (item.stock * item.unitPrice), 0);
+    return items.reduce((total, item) => total + (item.stock * item.price), 0);
   };
 
   const getLowStockItems = () => {
@@ -238,10 +239,10 @@ const ItemManagement = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Rs. {item.unitPrice.toFixed(2)}
+                        Rs. {item.price.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        Rs. {(item.stock * item.unitPrice).toFixed(2)}
+                        Rs. {(item.stock * item.price).toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">

@@ -5,7 +5,8 @@ const BASE_URL = "http://localhost:8080/back_end/api/v1/items";
 export async function fetchItems() {
   try {
     const response = await fetch(BASE_URL);
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to fetch items. Please try again later.");
   }
@@ -18,7 +19,8 @@ export async function addItem(itemData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(itemData),
     });
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to add item. Please try again later.");
   }
@@ -31,7 +33,8 @@ export async function updateItem(id, itemData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(itemData),
     });
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to update item. Please try again later.");
   }
@@ -42,7 +45,8 @@ export async function deleteItem(id) {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
     });
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to delete item. Please try again later.");
   }
