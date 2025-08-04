@@ -15,7 +15,7 @@ public class Item {
     private String name;
 
     // Price per unit of the item
-    private double unitPrice;
+    private double price;
 
     // Available quantity in stock
     private int stock;
@@ -38,7 +38,7 @@ public class Item {
     public Item(int id, String name, double unitPrice, int stock) {
         this.id = id;
         this.name = name;
-        this.unitPrice = unitPrice;
+        this.price = unitPrice;
         this.stock = stock;
     }
 
@@ -73,15 +73,15 @@ public class Item {
     /**
      * Returns the unit price of the item.
      */
-    public double getUnitPrice() {
-        return unitPrice;
+    public double getPrice() {
+        return price;
     }
 
     /**
      * Sets the unit price of the item.
      */
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setPrice(double unitPrice) {
+        this.price = unitPrice;
     }
 
     /**
@@ -106,7 +106,7 @@ public class Item {
         return "Item{"
                 + "id=" + id
                 + ", name='" + name + '\''
-                + ", unitPrice=" + unitPrice
+                + ", unitPrice=" + price
                 + ", stock=" + stock
                 + '}';
     }

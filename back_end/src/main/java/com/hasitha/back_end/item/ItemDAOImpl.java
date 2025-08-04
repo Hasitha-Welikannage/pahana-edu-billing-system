@@ -93,7 +93,7 @@ public class ItemDAOImpl implements ItemDAO {
         try (
                 Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, item.getName());
-            ps.setDouble(2, item.getUnitPrice());
+            ps.setDouble(2, item.getPrice());
             ps.setInt(3, item.getStock());
 
             ps.executeUpdate();
@@ -125,7 +125,7 @@ public class ItemDAOImpl implements ItemDAO {
         try (
                 Connection c = DBConnection.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, item.getName());
-            ps.setDouble(2, item.getUnitPrice());
+            ps.setDouble(2, item.getPrice());
             ps.setInt(3, item.getStock());
             ps.setInt(4, id);
 

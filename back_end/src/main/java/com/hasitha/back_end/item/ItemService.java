@@ -109,7 +109,7 @@ public class ItemService {
             throw new NotFoundException("Item with ID " + id + " not found.");
         }
 
-        return item.getUnitPrice();
+        return item.getPrice();
     }
 
     /**
@@ -138,11 +138,11 @@ public class ItemService {
             throw new ValidationException("Item name is required.");
         }
 
-        if (item.getUnitPrice() == 0) {
+        if (item.getPrice() == 0) {
             throw new ValidationException("Item price cannot be zero.");
         }
 
-        if (item.getUnitPrice() < 0) {
+        if (item.getPrice() < 0) {
             throw new ValidationException("Item price cannot be negative.");
         }
     }
