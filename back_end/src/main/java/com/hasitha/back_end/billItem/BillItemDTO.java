@@ -1,25 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.billItem;
 
 /**
- *
- * @author hasithawelikannage
+ * Data Transfer Object (DTO) representing a single item in a bill. This class
+ * is used to send item data between the backend and the frontend.
  */
 public class BillItemDTO {
 
-    private int id;
-    private int itemId;
-    private String itemName;
-    private double unitPrice;
-    private int quantity;
-    private double subTotal;
+    private int id;             // Unique identifier of the bill item (optional)
+    private int itemId;         // ID of the item from the items table
+    private String itemName;    // Name of the item
+    private double unitPrice;   // Price per unit of the item
+    private int quantity;       // Quantity of the item purchased
+    private double subTotal;    // Total price (unitPrice * quantity)
 
+    // Default constructor
     public BillItemDTO() {
     }
 
+    /**
+     * Constructor with all fields.
+     *
+     * @param id the bill item ID
+     * @param itemId the ID of the item
+     * @param itemName name of the item
+     * @param unitPrice price per unit
+     * @param quantity quantity purchased
+     * @param subTotal total cost (unitPrice * quantity)
+     */
     public BillItemDTO(int id, int itemId, String itemName, double unitPrice, int quantity, double subTotal) {
         this.id = id;
         this.itemId = itemId;
@@ -29,6 +36,7 @@ public class BillItemDTO {
         this.subTotal = subTotal;
     }
 
+    // Getter and Setter methods
     public int getId() {
         return id;
     }
@@ -76,5 +84,4 @@ public class BillItemDTO {
     public void setSubTotal(double subTotal) {
         this.subTotal = subTotal;
     }
-    
 }

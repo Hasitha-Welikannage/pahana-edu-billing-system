@@ -1,37 +1,73 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.billItem;
 
 /**
- *
- * @author hasithawelikannage
+ * Represents an item in a bill, containing details such as item ID, quantity,
+ * and total price.
  */
 public class BillItem {
 
+    /**
+     * Unique identifier of the bill item (primary key).
+     */
     private int id;
-    private int billId;
-    private int itemId;
-    private int quantity;
-    private double totalPrice;
 
+    /**
+     * Identifier of the bill to which this item belongs (foreign key).
+     */
+    private int billId;
+
+    /**
+     * Identifier of the item being billed (foreign key).
+     */
+    private int itemId;
+
+    /**
+     * Quantity of the item purchased.
+     */
+    private int quantity;
+
+    /**
+     * Total price for the quantity of this item (usually quantity × unit
+     * price).
+     */
+    private double subTotal;
+
+    /**
+     * Default no-argument constructor.
+     */
     public BillItem() {
     }
 
+    /**
+     * Constructor with all fields including the ID.
+     *
+     * @param id the ID of the bill item
+     * @param billId the associated bill ID
+     * @param itemId the ID of the item
+     * @param quantity the quantity purchased
+     * @param totalPrice the total price for this item
+     */
     public BillItem(int id, int billId, int itemId, int quantity, double totalPrice) {
         this.id = id;
         this.billId = billId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.totalPrice = totalPrice;
+        this.subTotal = totalPrice;
     }
 
+    /**
+     * Constructor excluding the bill item ID (used for inserts).
+     *
+     * @param billId the associated bill ID
+     * @param itemId the ID of the item
+     * @param quantity the quantity purchased
+     * @param totalPrice the total price for this item
+     */
     public BillItem(int billId, int itemId, int quantity, double totalPrice) {
         this.billId = billId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.totalPrice = totalPrice;
+        this.subTotal = totalPrice;
     }
 
     public int getId() {
@@ -66,17 +102,20 @@ public class BillItem {
         this.quantity = quantity;
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
+    public double getSubTotal() {
+        return subTotal;
     }
 
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setSubTotal(double subTotal) {
+        this.subTotal = subTotal;
     }
 
     @Override
     public String toString() {
-        return "BillItem{" + "itemId=" + itemId + ", quantity=" + quantity + ", totalPrice=" + totalPrice + '}';
+        return "BillItem{"
+                + "itemId=" + itemId
+                + ", quantity=" + quantity
+                + ", totalPrice=" + subTotal
+                + '}';
     }
-
 }

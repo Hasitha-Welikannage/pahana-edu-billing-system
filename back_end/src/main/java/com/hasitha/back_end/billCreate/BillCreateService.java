@@ -72,7 +72,7 @@ public class BillCreateService {
 
             Item item = itemService.findById(billItem.getItemId());
 
-            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getTotalPrice()));
+            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getSubTotal()));
         }
 
         BillDTO billDto = new BillDTO(billHeader.getId(), customer, user, billHeader.getDate(), billHeader.getTotal(), billItemsDto);
@@ -110,7 +110,7 @@ public class BillCreateService {
 
             Item item = itemService.findById(billItem.getItemId());
 
-            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getTotalPrice()));
+            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getSubTotal()));
 
         }
 
