@@ -14,7 +14,7 @@ import java.util.List;
 public class ItemService {
 
     // DAO used for database operations
-    ItemDAOInterface itemDao = new ItemDAO();
+    ItemDAO itemDao = new ItemDAOImpl();
 
     /**
      * Retrieves all items.
