@@ -65,7 +65,7 @@ public class UserServiceTest {
         user.setFirstName("New");
         user.setLastName("User");
         user.setUserName("newuser");
-        user.setPassword("pass");
+        user.setPassword("pass123456");
         user.setRole("ADMIN");
 
         when(mockUserDao.findByUsername("newuser")).thenReturn(null);
@@ -81,7 +81,7 @@ public class UserServiceTest {
         user.setFirstName("New");
         user.setLastName("User");
         user.setUserName("existinguser");
-        user.setPassword("pass");
+        user.setPassword("pass123456");
         user.setRole("ADMIN");
 
         when(mockUserDao.findByUsername("existinguser")).thenReturn(new User());
