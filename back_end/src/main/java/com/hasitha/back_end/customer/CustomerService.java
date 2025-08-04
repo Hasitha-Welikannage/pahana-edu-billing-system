@@ -8,19 +8,38 @@ import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
+/**
+ * Service layer for handling business logic related to customers. Communicates
+ * with CustomerDAO for database operations and handles validation and error
+ * checking.
+ */
 public class CustomerService {
 
     private final CustomerDAO customerDao;
 
+    /**
+     * Constructor that accepts a CustomerDAO implementation for dependency
+     * injection.
+     *
+     * @param customerDao DAO implementation to use for database access.
+     */
     public CustomerService(CustomerDAO customerDao) {
         this.customerDao = customerDao;
     }
 
+    /**
+     * Default constructor that initializes with the default CustomerDAOImpl.
+     */
     public CustomerService() {
         this.customerDao = new CustomerDAOImpl();
     }
 
-    // ----------- GET ALL CUSTOMER -----------
+    /**
+     * Retrieves all customers from the database.
+     *
+     * @return a list of Customer objects.
+     * @throws NotFoundException if no customers are found.
+     */
     public List<Customer> findAll() {
         List<Customer> customerList = customerDao.findAll();
         if (customerList == null || customerList.isEmpty()) {
@@ -29,7 +48,13 @@ public class CustomerService {
         return customerList;
     }
 
-    // ----------- GET CUSTOMER BY ID -----------
+    /**
+     * Finds a customer by their unique ID.
+     *
+     * @param id the customer ID.
+     * @return the Customer object.
+     * @throws NotFoundException if the customer is not found.
+     */
     public Customer findById(int id) {
         Customer customer = customerDao.findById(id);
         if (customer == null) {
@@ -38,40 +63,74 @@ public class CustomerService {
         return customer;
     }
 
-    // ----------- CREATE CUSTOMER -----------
+    /**
+     * Creates a new customer after validating the input.
+     *
+     * @param customer the customer object to create.
+     * @return the created Customer with generated ID.
+     * @throws ValidationException if validation fails.
+     */
     public Customer create(Customer customer) {
         validateCustomer(customer);
         return customerDao.create(customer);
     }
 
-    // ----------- UPDATE CUSTOMER BY ID -----------
+    /**
+     * Updates an existing customer by ID after validation.
+     *
+     * @param id the customer ID.
+     * @param customerUpdate the customer object with updated data.
+     * @return the updated Customer object.
+     * @throws NotFoundException if the customer does not exist.
+     * @throws ValidationException if validation fails.
+     */
     public Customer update(int id, Customer customerUpdate) {
         ensureCustomerExists(id);
         validateCustomer(customerUpdate);
         return customerDao.update(id, customerUpdate);
     }
 
-    // ----------- DELETE CUSTOMER BY ID -----------
+    /**
+     * Deletes a customer by ID.
+     *
+     * @param id the customer ID.
+     * @throws NotFoundException if the customer does not exist.
+     */
     public void delete(int id) {
         ensureCustomerExists(id);
         customerDao.delete(id);
     }
 
+    /**
+     * Ensures a customer exists by ID.
+     *
+     * @param id the customer ID.
+     * @throws NotFoundException if the customer is not found.
+     */
     public void ensureCustomerExists(int id) {
         if (customerDao.findById(id) == null) {
             throw new NotFoundException("Customer with the specified ID " + id + " does not exist.");
         }
     }
 
-    // ----------- CHECK CUSTOMER EXISTS BY ID -----------
+    /**
+     * Checks whether a customer exists by ID.
+     *
+     * @param id the customer ID.
+     * @return true if the customer exists, false otherwise.
+     */
     public boolean exists(int id) {
-
         Customer customer = customerDao.findById(id);
         return customer != null;
-
     }
 
-    // ----------- VALIDATION METHOD -----------
+    /**
+     * Validates a customer object to ensure all required fields are present and
+     * correctly formatted.
+     *
+     * @param customer the customer to validate.
+     * @throws ValidationException if any validation rules are violated.
+     */
     private void validateCustomer(Customer customer) {
         if (customer.getFirstName() == null || customer.getFirstName().isBlank()) {
             throw new ValidationException("First name is required and cannot be empty.");
@@ -89,5 +148,4 @@ public class CustomerService {
             throw new ValidationException("Address is required and cannot be empty.");
         }
     }
-
 }
