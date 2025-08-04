@@ -1,15 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.exceptions;
 
 /**
+ * Custom exception class indicating that a requested resource was not found.
  *
- * @author hasithawelikannage
+ * Extends {@link AppException} to signal a "not found" error condition,
+ * typically used when an entity does not exist in the database or data source.
  */
 public class NotFoundException extends AppException {
 
+    /**
+     * Constructs a new NotFoundException with the specified detail message.
+     *
+     * @param m the detail message explaining the exception
+     */
     public NotFoundException(String m) {
         super(m);
     }
