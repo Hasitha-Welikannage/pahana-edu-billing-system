@@ -2,7 +2,6 @@ package com.hasitha.back_end.item;
 
 import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
-
 import java.util.List;
 
 /**
@@ -14,7 +13,17 @@ import java.util.List;
 public class ItemService {
 
     // DAO used for database operations
-    ItemDAO itemDao = new ItemDAOImpl();
+    private final ItemDAO itemDao;
+
+    // Constructor for injection (used in tests)
+    public ItemService(ItemDAO itemDao) {
+        this.itemDao = itemDao;
+    }
+
+    // Default constructor (used in production)
+    public ItemService() {
+        this.itemDao = new ItemDAOImpl(); // default real DAO
+    }
 
     /**
      * Retrieves all items.
@@ -24,11 +33,9 @@ public class ItemService {
      */
     public List<Item> findAll() {
         List<Item> itemList = itemDao.findAll();
-
         if (itemList == null || itemList.isEmpty()) {
-            throw new NotFoundException("items can not be found");
+            throw new NotFoundException("No items found in the system.");
         }
-
         return itemList;
     }
 
@@ -41,11 +48,9 @@ public class ItemService {
      */
     public Item findById(int id) {
         Item item = itemDao.findById(id);
-
         if (item == null) {
-            throw new NotFoundException("Item with ID " + id + " does not exist.");
+            throw new NotFoundException("Item with the specified ID " + id + " does not exist.");
         }
-
         return item;
     }
 
@@ -65,20 +70,16 @@ public class ItemService {
      * Updates an existing item.
      *
      * @param id the ID of the item to update
-     * @param item the updated item data
+     * @param itemUpdate the updated item data
      * @return the updated item
      * @throws NotFoundException if the item does not exist
      * @throws ValidationException if the updated data is invalid
      */
-    public Item update(int id, Item item) {
-        if (!exists(id)) {
-            throw new NotFoundException("Item with ID " + id + " does not exist.");
-        }
-
-        validateItem(item);
-        item.setId(id); // Ensure ID consistency
-
-        return itemDao.update(id, item);
+    public Item update(int id, Item itemUpdate) {
+        ensureItemExists(id);
+        validateItem(itemUpdate);
+        itemUpdate.setId(id); // Ensure ID consistency
+        return itemDao.update(id, itemUpdate);
     }
 
     /**
@@ -88,10 +89,7 @@ public class ItemService {
      * @throws NotFoundException if the item does not exist
      */
     public void delete(int id) {
-        if (!exists(id)) {
-            throw new NotFoundException("Item with ID " + id + " does not exist.");
-        }
-
+        ensureItemExists(id);
         itemDao.delete(id);
     }
 
@@ -103,24 +101,19 @@ public class ItemService {
      * @throws NotFoundException if the item is not found
      */
     public double getPriceById(int id) {
-        Item item = itemDao.findById(id);
-
-        if (item == null) {
-            throw new NotFoundException("Item with ID " + id + " not found.");
-        }
-
-        return item.getPrice();
+        return findById(id).getPrice();
     }
 
     /**
-     * Checks if an item exists by its ID.
+     * Checks if an item exists by ID.
      *
      * @param id the ID to check
-     * @return true if the item exists, false otherwise
+     * @throws NotFoundException if the item is not found
      */
-    public boolean exists(int id) {
-        Item item = itemDao.findById(id);
-        return item != null;
+    public void ensureItemExists(int id) {
+        if (itemDao.findById(id) == null) {
+            throw new NotFoundException("Item with the specified ID " + id + " does not exist.");
+        }
     }
 
     /**
@@ -133,17 +126,15 @@ public class ItemService {
         if (item == null) {
             throw new ValidationException("Item cannot be null.");
         }
-
         if (item.getName() == null || item.getName().trim().isEmpty()) {
-            throw new ValidationException("Item name is required.");
+            throw new ValidationException("Item name is required and cannot be empty.");
+        }
+        if (item.getPrice() <= 0) {
+            throw new ValidationException("Item price must be greater than zero.");
+        }
+        if (item.getStock() < 0) {
+            throw new ValidationException("Stock quantity cannot be negative.");
         }
 
-        if (item.getPrice() == 0) {
-            throw new ValidationException("Item price cannot be zero.");
-        }
-
-        if (item.getPrice() < 0) {
-            throw new ValidationException("Item price cannot be negative.");
-        }
     }
 }

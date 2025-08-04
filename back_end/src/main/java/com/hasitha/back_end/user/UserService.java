@@ -30,15 +30,11 @@ public class UserService {
      * @throws NotFoundException if no users are found
      */
     public List<User> findAll() {
-
         List<User> userList = userDao.findAll();
-
         if (userList == null || userList.isEmpty()) {
             throw new NotFoundException("No users found in the system.");
         }
-
         return userList;
-
     }
 
     /**
@@ -49,15 +45,11 @@ public class UserService {
      * @throws NotFoundException if the user is not found
      */
     public User findById(int id) {
-
         User user = userDao.findById(id);
-
         if (user == null) {
             throw new NotFoundException("User with the specified ID " + id + " does not exist.");
         }
-
         return user;
-
     }
 
     /**
@@ -68,10 +60,8 @@ public class UserService {
      * @throws ValidationException if input data is invalid
      */
     public User create(User user) {
-
         validateUser(user, true);
         return userDao.create(user);
-
     }
 
     /**
@@ -84,20 +74,14 @@ public class UserService {
      * @throws ValidationException if the update data is invalid
      */
     public User update(int id, User userUpdate) {
-
         ensureUserExists(id);
-
         String currentPassword = userDao.findPasswordById(id);
-
         if (userUpdate.getPassword() == null || userUpdate.getPassword().isBlank()) {
             userUpdate.setPassword(currentPassword);
         }
-
         userUpdate.setId(id);
         validateUser(userUpdate, false);
-
         return userDao.update(id, userUpdate);
-
     }
 
     /**
@@ -107,10 +91,8 @@ public class UserService {
      * @throws NotFoundException if the user is not found
      */
     public void delete(int id) {
-
         ensureUserExists(id);
         userDao.delete(id);
-
     }
 
     /**
@@ -120,11 +102,9 @@ public class UserService {
      * @return true if user ensureUserExists, false otherwise
      */
     public void ensureUserExists(int id) {
-
         if (userDao.findById(id) == null) {
             throw new NotFoundException("User with the specified ID " + id + " does not exist.");
         }
-
     }
 
     /**

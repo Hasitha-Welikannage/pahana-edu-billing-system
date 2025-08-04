@@ -92,8 +92,8 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(4, user.getPassword());
             ps.setString(5, user.getRole());
 
-            int affected = ps.executeUpdate();
-            if (affected == 0) {
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
                 throw new DatabaseException("Creating user failed, no rows affected");
             }
 
