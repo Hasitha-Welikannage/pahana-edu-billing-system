@@ -44,9 +44,10 @@ public class BillCreateService {
             if (dto.getQuantity() <= 0) {
                 throw new AppException("Quantity must be > 0 for item " + dto.getItemId());
             }
-            if (!itemService.exists(dto.getItemId())) {
-                throw new AppException("Item does not exist: " + dto.getItemId());
-            }
+            itemService.ensureItemExists(dto.getItemId());
+//            if (!itemService.exists(dto.getItemId())) {
+//                throw new AppException("Item does not exist: " + dto.getItemId());
+//            }
 
             double unitPrice = itemService.getPriceById(dto.getItemId());
             double subtotal = unitPrice * dto.getQuantity();
