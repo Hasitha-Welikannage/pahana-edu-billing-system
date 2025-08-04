@@ -9,10 +9,9 @@ import java.util.List;
 
 /**
  * REST API resource class for managing users.
- * <p>
+ * 
  * Handles CRUD operations such as retrieving, creating, updating, and deleting
  * users. Communicates with {@link UserService}.
- * </p>
  *
  * @author hasithawelikannage
  */
@@ -21,18 +20,26 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
 
-    private final UserService userService = new UserService();
-    
+    private final UserService userService;
+
+    // Default constructor (used in production)
+    public UserResource() {
+        this.userService = new UserService();
+    }
+
+    // Constructor for injection (used in tests)
+    public UserResource(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
-     * Retrieves a list of all users.
+     * Retrieves a list of findAll users.
      *
      * @return HTTP 200 OK with a list of users in ApiResponse
      */
     @GET
-    public Response all() {
-
+    public Response findAll() {
         List<User> list = userService.findAll();
-
         return Response
                 .status(Response.Status.OK)
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, list))
@@ -47,15 +54,12 @@ public class UserResource {
      */
     @GET
     @Path("/{id}")
-    public Response getUser(@PathParam("id") int id) {
-
+    public Response findById(@PathParam("id") int id) {
         User user = userService.findById(id);
-
         return Response
                 .status(Response.Status.OK)
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, user))
                 .build();
-
     }
 
     /**
@@ -65,15 +69,12 @@ public class UserResource {
      * @return HTTP 201 Created with the created user in ApiResponse
      */
     @POST
-    public Response createUser(User user) {
-
+    public Response create(User user) {
         User createdUser = userService.create(user);
-
         return Response
                 .status(Response.Status.CREATED)
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdUser))
                 .build();
-
     }
 
     /**
@@ -85,15 +86,12 @@ public class UserResource {
      */
     @PUT
     @Path("/{id}")
-    public Response updateUser(@PathParam("id") int id, User user) {
-
+    public Response update(@PathParam("id") int id, User user) {
         User updatedUser = userService.update(id, user);
-
         return Response
                 .status(Response.Status.OK)
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedUser))
                 .build();
-
     }
 
     /**
@@ -104,10 +102,8 @@ public class UserResource {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteUser(@PathParam("id") int id) {
-
+    public Response delete(@PathParam("id") int id) {
         userService.delete(id);
-
         return Response
                 .status(Response.Status.OK)
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null))

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class UserService {
 
-    UserDAO userDao;
+    private final UserDAO userDao;
 
     // Constructor for injection (used in tests)
     public UserService(UserDAO userDAO) {

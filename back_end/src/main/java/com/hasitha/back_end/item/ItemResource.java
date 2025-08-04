@@ -20,14 +20,23 @@ import java.util.List;
  *
  * Endpoint base path: /items Consumes and produces JSON data.
  *
- * Author: Hasitha Welikannage
  */
 @Path("/items")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ItemResource {
 
-    ItemService itemService = new ItemService();
+    private final ItemService itemService;
+
+    // Default constructor (used in production)
+    public ItemResource() {
+        this.itemService = new ItemService();
+    }
+
+    // Constructor for injection (used in tests)
+    public ItemResource(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     /**
      * Retrieves a list of all items.
@@ -35,10 +44,12 @@ public class ItemResource {
      * @return Response containing the list of items and a success message.
      */
     @GET
-    public Response getAll() {
+    public Response findAll() {
         List<Item> items = itemService.findAll();
-        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, items);
-        return Response.ok(apiResponse).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, items))
+                .build();
     }
 
     /**
@@ -49,10 +60,12 @@ public class ItemResource {
      */
     @GET
     @Path("/{id}")
-    public Response getById(@PathParam("id") int id) {
+    public Response findById(@PathParam("id") int id) {
         Item item = itemService.findById(id);
-        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, item);
-        return Response.ok(apiResponse).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, item))
+                .build();
     }
 
     /**
@@ -63,9 +76,11 @@ public class ItemResource {
      */
     @POST
     public Response create(Item item) {
-        Item created = itemService.create(item);
-        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, created);
-        return Response.status(Response.Status.CREATED).entity(apiResponse).build();
+        Item createdItem = itemService.create(item);
+        return Response
+                .status(Response.Status.CREATED)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.CREATE_SUCCESS, createdItem))
+                .build();
     }
 
     /**
@@ -78,22 +93,26 @@ public class ItemResource {
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") int id, Item item) {
-        Item updated = itemService.update(id, item);
-        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updated);
-        return Response.ok(apiResponse).build();
+        Item updatedItem = itemService.update(id, item);
+        return Response
+                .status(Response.Status.OK)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.UPDATE_SUCCESS, updatedItem))
+                .build();
     }
 
     /**
      * Deletes an item by ID.
      *
      * @param id The ID of the item to delete.
-     * @return Response with no content and a deletion success message.
+     * @return Response with success message and HTTP 200 OK status.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id) {
         itemService.delete(id);
-        ApiResponse apiResponse = new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null);
-        return Response.status(Response.Status.NO_CONTENT).entity(apiResponse).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.DELETE_SUCCESS, null))
+                .build();
     }
 }
