@@ -4,11 +4,9 @@
  */
 package com.hasitha.back_end.customer;
 
-/**
- *
- * @author hasithawelikannage
- */
+
 public class Customer {
+
     private int id;
     private String firstName;
     private String lastName;

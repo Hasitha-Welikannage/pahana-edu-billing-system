@@ -41,7 +41,7 @@ public class ItemDAOImpl implements ItemDAO {
             }
             return list;
         } catch (SQLException ex) {
-            throw new DatabaseException("Error fetching all items. " + ex);
+            throw new DatabaseException("Error fetching all items. " + ex.getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ public class ItemDAOImpl implements ItemDAO {
             }
             return null;
         } catch (SQLException ex) {
-            throw new DatabaseException("Error fetching item with ID " + id + ". " + ex);
+            throw new DatabaseException("Error fetching item with ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -98,7 +98,7 @@ public class ItemDAOImpl implements ItemDAO {
                 throw new DatabaseException("Creating item failed, no ID obtained.");
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("Error creating item. " + ex);
+            throw new DatabaseException("Error creating item. " + ex.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class ItemDAOImpl implements ItemDAO {
             }
             return findById(id);
         } catch (SQLException ex) {
-            throw new DatabaseException("Error updating item with ID " + id + ". " + ex);
+            throw new DatabaseException("Error updating item with ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -145,7 +145,7 @@ public class ItemDAOImpl implements ItemDAO {
                 throw new DatabaseException("Deleting item failed, no rows affected for ID: " + id);
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("Error deleting item with ID " + id + ". " + ex);
+            throw new DatabaseException("Error deleting item with ID " + id + ". " + ex.getMessage());
         }
     }
 }

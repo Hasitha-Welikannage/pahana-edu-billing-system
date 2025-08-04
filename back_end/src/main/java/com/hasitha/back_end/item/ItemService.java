@@ -126,7 +126,7 @@ public class ItemService {
         if (item == null) {
             throw new ValidationException("Item cannot be null.");
         }
-        if (item.getName() == null || item.getName().trim().isEmpty()) {
+        if (item.getName() == null || item.getName().isBlank()) {
             throw new ValidationException("Item name is required and cannot be empty.");
         }
         if (item.getPrice() <= 0) {

@@ -39,7 +39,7 @@ public class UserDAOImpl implements UserDAO {
             }
             return list;
         } catch (SQLException ex) {
-            throw new DatabaseException("Error fetching all users. " + ex);
+            throw new DatabaseException("Error fetching all users. " + ex.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class UserDAOImpl implements UserDAO {
                 return null;
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("Error fetching user with ID " + id + ". " + ex);
+            throw new DatabaseException("Error fetching user with ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -99,15 +99,15 @@ public class UserDAOImpl implements UserDAO {
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
-                user.setId(generatedKeys.getInt(1));
+                user.setId(generatedKeys.getInt(1));   
+                // Return user without password for security
+                return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
             } else {
                 throw new DatabaseException("Creating user failed, no ID obtained.");
             }
 
-            // Return user without password for security
-            return new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUserName(), user.getRole());
         } catch (SQLException ex) {
-            throw new DatabaseException("Error creating user. " + ex);
+            throw new DatabaseException("Error creating user. " + ex.getMessage());
         }
     }
 
@@ -138,7 +138,7 @@ public class UserDAOImpl implements UserDAO {
 
             return findById(id); // Return the updated user
         } catch (SQLException ex) {
-            throw new DatabaseException("Error updating user with ID " + id + ". " + ex);
+            throw new DatabaseException("Error updating user with ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -159,7 +159,7 @@ public class UserDAOImpl implements UserDAO {
                 throw new DatabaseException("Deleting user failed, no rows affected for ID: " + id);
             }
         } catch (SQLException ex) {
-            throw new DatabaseException("Error deleting user with ID " + id + ". " + ex);
+            throw new DatabaseException("Error deleting user with ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -188,7 +188,7 @@ public class UserDAOImpl implements UserDAO {
             }
             return null;
         } catch (SQLException ex) {
-            throw new DatabaseException("Error finding user by username: " + username + ". " + ex);
+            throw new DatabaseException("Error finding user by username: " + username + ". " + ex.getMessage());
         }
     }
 
@@ -213,7 +213,7 @@ public class UserDAOImpl implements UserDAO {
             }
 
         } catch (SQLException ex) {
-            throw new DatabaseException("Error fetching password for user ID " + id + ". " + ex);
+            throw new DatabaseException("Error fetching password for user ID " + id + ". " + ex.getMessage());
         }
     }
 
@@ -231,7 +231,7 @@ public class UserDAOImpl implements UserDAO {
             }
 
         } catch (SQLException ex) {
-            throw new DatabaseException("Error updating password for user ID " + userId + ". " + ex);
+            throw new DatabaseException("Error updating password for user ID " + userId + ". " + ex.getMessage());
         }
     }
 

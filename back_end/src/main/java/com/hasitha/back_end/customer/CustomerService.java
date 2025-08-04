@@ -8,76 +8,61 @@ import com.hasitha.back_end.exceptions.NotFoundException;
 import com.hasitha.back_end.exceptions.ValidationException;
 import java.util.List;
 
-/**
- *
- * @author hasithawelikannage
- */
 public class CustomerService {
 
-    CustomerDAOInterface customerDao = new CustomerDAO();
+    private final CustomerDAO customerDao;
+
+    public CustomerService(CustomerDAO customerDao) {
+        this.customerDao = customerDao;
+    }
+
+    public CustomerService() {
+        this.customerDao = new CustomerDAOImpl();
+    }
 
     // ----------- GET ALL CUSTOMER -----------
     public List<Customer> findAll() {
-
         List<Customer> customerList = customerDao.findAll();
-
         if (customerList == null || customerList.isEmpty()) {
-            throw new NotFoundException("customers not found");
+            throw new NotFoundException("No customers found in the system.");
         }
-
         return customerList;
     }
 
     // ----------- GET CUSTOMER BY ID -----------
     public Customer findById(int id) {
-
         Customer customer = customerDao.findById(id);
-
         if (customer == null) {
-            throw new NotFoundException("customer not found");
+            throw new NotFoundException("Customer with the specified ID " + id + " does not exist.");
         }
-
         return customer;
     }
 
     // ----------- CREATE CUSTOMER -----------
     public Customer create(Customer customer) {
-
         validateCustomer(customer);
-
-        Customer createdCustomer = customerDao.create(customer);
-
-        return createdCustomer;
+        return customerDao.create(customer);
     }
 
     // ----------- UPDATE CUSTOMER BY ID -----------
-    public Customer update(int id, Customer CustomerUpdate) {
-
-        Customer customer = customerDao.findById(id);
-
-        if (customer == null) {
-            throw new NotFoundException("customer not found");
-        }
-
-        validateCustomer(CustomerUpdate);
-
-        Customer updatedCustomer = customerDao.update(id, CustomerUpdate);
-
-        return updatedCustomer;
+    public Customer update(int id, Customer customerUpdate) {
+        ensureCustomerExists(id);
+        validateCustomer(customerUpdate);
+        return customerDao.update(id, customerUpdate);
     }
 
     // ----------- DELETE CUSTOMER BY ID -----------
     public void delete(int id) {
-
-        Customer customer = customerDao.findById(id);
-
-        if (customer == null) {
-            throw new NotFoundException("customer not found");
-        }
-
+        ensureCustomerExists(id);
         customerDao.delete(id);
     }
-    
+
+    public void ensureCustomerExists(int id) {
+        if (customerDao.findById(id) == null) {
+            throw new NotFoundException("Customer with the specified ID " + id + " does not exist.");
+        }
+    }
+
     // ----------- CHECK CUSTOMER EXISTS BY ID -----------
     public boolean exists(int id) {
 
@@ -88,23 +73,21 @@ public class CustomerService {
 
     // ----------- VALIDATION METHOD -----------
     private void validateCustomer(Customer customer) {
-
-        if (customer.getFirstName() == null || customer.getFirstName().equalsIgnoreCase("")) {
-            throw new ValidationException("first name can not be empty");
+        if (customer.getFirstName() == null || customer.getFirstName().isBlank()) {
+            throw new ValidationException("First name is required and cannot be empty.");
         }
-
-        if (customer.getLastName() == null || customer.getLastName().equalsIgnoreCase("")) {
-            throw new ValidationException("last name can not be empty");
+        if (customer.getLastName() == null || customer.getLastName().isBlank()) {
+            throw new ValidationException("Last name is required and cannot be empty.");
         }
-
-        if (customer.getPhoneNumber() == null || customer.getPhoneNumber().equalsIgnoreCase("")) {
-            throw new ValidationException("phone number can not be empty");
+        if (customer.getPhoneNumber() == null || customer.getPhoneNumber().isBlank()) {
+            throw new ValidationException("Phone number is required and cannot be empty.");
         }
-
-        if (customer.getAddress() == null || customer.getAddress().equalsIgnoreCase("")) {
-            throw new ValidationException("address can not be empty");
+        if (!customer.getPhoneNumber().matches("^\\+[0-9]{11}$")) {
+            throw new ValidationException("Phone number format is invalid. Expected format: +94712345678");
         }
-
+        if (customer.getAddress() == null || customer.getAddress().isBlank()) {
+            throw new ValidationException("Address is required and cannot be empty.");
+        }
     }
 
 }
