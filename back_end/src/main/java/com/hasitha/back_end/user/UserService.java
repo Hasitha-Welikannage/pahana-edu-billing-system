@@ -119,29 +119,29 @@ public class UserService {
         if (user.getFirstName() == null || user.getFirstName().isBlank()) {
             throw new ValidationException("First name is required and cannot be empty.");
         }
-
         if (user.getLastName() == null || user.getLastName().isBlank()) {
             throw new ValidationException("Last name is required and cannot be empty.");
         }
-
         if (user.getUserName() == null || user.getUserName().isBlank()) {
             throw new ValidationException("Username is required and cannot be empty.");
         }
-
+        if (user.getUserName().length() < 4 || user.getUserName().length() > 30) {
+            throw new ValidationException("Username must be between 4 and 30 characters.");
+        }
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             throw new ValidationException("Password is required and cannot be empty.");
         }
-
+        if (user.getPassword().length() < 6 || user.getPassword().length() > 50) {
+            throw new ValidationException("Password must be between 6 and 50 characters.");
+        }
         if (user.getRole() == null || user.getRole().isBlank()) {
             throw new ValidationException("User role is required and cannot be empty.");
         }
-
         if (isCreate) {
             if (userDao.findByUsername(user.getUserName()) != null) {
                 throw new ValidationException(MessageConstants.USERNAME_EXISTS);
             }
         } else {
-
             // Allow same username if it belongs to the same user (update scenario)
             User existingUser = userDao.findByUsername(user.getUserName());
             if (existingUser != null && existingUser.getId() != user.getId()) {

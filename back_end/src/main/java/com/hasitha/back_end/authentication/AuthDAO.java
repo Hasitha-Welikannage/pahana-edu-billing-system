@@ -1,4 +1,3 @@
-
 package com.hasitha.back_end.authentication;
 
 import com.hasitha.back_end.user.User;
@@ -6,8 +5,8 @@ import com.hasitha.back_end.user.User;
 /**
  * Data Access Object for authentication-related operations.
  */
-public interface AuthenticationDAO {
-    
+public interface AuthDAO {
+
     /**
      * Authenticates a user with username and password.
      *
