@@ -1,6 +1,6 @@
 import { FiAlertTriangle } from "react-icons/fi";
 
-const DeleteConfirm = ({ isOpen, onClose, onConfirm, userName }) => {
+const DeleteConfirm = ({ isOpen, onClose, onConfirm, ItemType, ItemName }) => {
   if (!isOpen) return null;
 
   return (
@@ -14,7 +14,7 @@ const DeleteConfirm = ({ isOpen, onClose, onConfirm, userName }) => {
             </div>
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Delete User
+                Delete {ItemType}
               </h3>
               <p className="text-sm text-gray-500">
                 This action cannot be undone
@@ -26,8 +26,8 @@ const DeleteConfirm = ({ isOpen, onClose, onConfirm, userName }) => {
         {/* Content */}
         <div className="px-6 py-4">
           <p className="text-gray-700">
-            Are you sure you want to delete the user{" "}
-            <span className="font-semibold text-gray-900">{userName}</span>?
+            Are you sure you want to delete the {ItemType}{" "}
+            <span className="font-semibold text-gray-900">{ItemName}</span>?
             This will permanently remove their account and all associated data.
           </p>
         </div>
@@ -45,7 +45,7 @@ const DeleteConfirm = ({ isOpen, onClose, onConfirm, userName }) => {
               onClick={onConfirm}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors cursor-pointer"
             >
-              Delete User
+              Delete {ItemType}
             </button>
           </div>
         </div>

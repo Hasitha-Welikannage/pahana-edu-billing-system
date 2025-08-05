@@ -193,19 +193,8 @@ function UserManagement() {
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="text-gray-500">
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400 mb-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                          />
-                        </svg>
+                        <FiUsers className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+
                         <p className="text-lg font-medium text-gray-900 mb-2">
                           No users found
                         </p>
@@ -253,13 +242,13 @@ function UserManagement() {
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() => handleEdit(user)}
-                            className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+                            className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(user)}
-                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer"
                           >
                             Delete
                           </button>
@@ -296,7 +285,8 @@ function UserManagement() {
             isOpen={showDelete}
             onClose={() => setShowDelete(false)}
             onConfirm={handleConfirmDelete}
-            userName={`${deletingUser?.firstName} ${deletingUser?.lastName}`}
+            ItemType="User"
+            ItemName={`${deletingUser?.firstName} ${deletingUser?.lastName}`}
           />
         )}
       </div>

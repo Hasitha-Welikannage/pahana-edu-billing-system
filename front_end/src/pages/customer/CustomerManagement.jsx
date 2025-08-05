@@ -284,7 +284,8 @@ const CustomerManagement = () => {
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleDelete}
-        userName={`${deleteTarget?.firstName} ${deleteTarget?.lastName}`}
+        ItemType="Customer"
+        ItemName={deleteTarget ? `${deleteTarget.firstName} ${deleteTarget.lastName}` : ""}
       />
     </div>
   );

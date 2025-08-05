@@ -280,7 +280,8 @@ const ItemManagement = () => {
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={confirmDelete}
-        userName={itemToDelete?.name || ""}
+        ItemType="Item"
+        ItemName={itemToDelete?.name || ""}
       />
     </div>
   );
