@@ -1,5 +1,7 @@
 package com.hasitha.back_end.authentication;
 
+import com.hasitha.back_end.exceptions.MessageConstants;
+import com.hasitha.back_end.response.ErrorResponse;
 import com.hasitha.back_end.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -23,21 +25,29 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         User user = (User) request.getSession().getAttribute("user");
 
         // Step 1: Skip auth checks for /auth (login, register, etc.)
-        if (path.startsWith("auth/login")) {
+        if (path.startsWith("auth")) {
             return;
         }
 
         // Step 2: Block all unauthenticated access
         if (user == null) {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Login required").build());
+            requestContext.abortWith(
+                    Response
+                            .status(Response.Status.UNAUTHORIZED)
+                            .entity(new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.UNAUTHORIZED_ACCESS, null))
+                            .build()
+            );
             return;
         }
 
         // Step 3: Restrict /users and /items to ADMIN only
         if ((path.startsWith("users") || path.startsWith("items")) && !"ADMIN".equalsIgnoreCase(user.getRole())) {
-            requestContext.abortWith(Response.status(Response.Status.FORBIDDEN)
-                    .entity("Access denied. Admins only.").build());
+            requestContext.abortWith(
+                    Response
+                            .status(Response.Status.FORBIDDEN)
+                            .entity(new ErrorResponse(MessageConstants.FORBIDDEN_CODE, MessageConstants.FORBIDDEN_ROLE, null))
+                            .build()
+            );
         }
     }
 }
