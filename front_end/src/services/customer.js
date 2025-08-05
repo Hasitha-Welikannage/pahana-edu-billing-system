@@ -2,7 +2,10 @@ const BASE_URL = "http://localhost:8080/back_end/api/v1/customers";
 
 export async function fetchCustomers() {
   try {
-    const response = await fetch(BASE_URL);
+    const response = await fetch(BASE_URL, {
+      method: "GET",
+      credentials: "include",
+    });
     const data = await response.json();
     return data;
   } catch (error) {
@@ -14,6 +17,7 @@ export async function addCustomer(customerData) {
   try {
     const response = await fetch(BASE_URL, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(customerData),
     });
@@ -28,6 +32,7 @@ export async function updateCustomer(id, customerData) {
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(customerData),
     });
@@ -42,6 +47,7 @@ export async function deleteCustomer(id) {
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     const data = await response.json();
     return data;

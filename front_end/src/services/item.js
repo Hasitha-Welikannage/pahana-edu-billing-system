@@ -4,7 +4,11 @@ const BASE_URL = "http://localhost:8080/back_end/api/v1/items";
 
 export async function fetchItems() {
   try {
-    const response = await fetch(BASE_URL);
+    const response = await fetch(BASE_URL, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
     const data = await response.json();
     return data;
   } catch (error) {
@@ -16,6 +20,7 @@ export async function addItem(itemData) {
   try {
     const response = await fetch(BASE_URL, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(itemData),
     });
@@ -30,6 +35,7 @@ export async function updateItem(id, itemData) {
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(itemData),
     });
@@ -44,6 +50,8 @@ export async function deleteItem(id) {
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
     });
     const data = await response.json();
     return data;

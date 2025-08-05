@@ -21,8 +21,12 @@ const CustomerManagement = () => {
     try {
       setLoading(true);
       setError("");
-      const result = await fetchCustomers();
-      setCustomers(result.data);
+      const data = await fetchCustomers();
+      if(data.success){
+      setCustomers(data.data);
+      }else{
+        setError(data.message || "Failed to load customers");
+      }
     } catch (error) {
       setError("Error loading customers");
     } finally {

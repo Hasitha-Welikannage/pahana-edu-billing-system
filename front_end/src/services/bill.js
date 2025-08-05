@@ -5,7 +5,6 @@ export async function createBill(billData) {
     const response = await fetch(BASE_URL, {
       method: "POST",
       credentials: "include",
-
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(billData),
     });
@@ -19,7 +18,11 @@ export async function createBill(billData) {
 
 export async function getAllBills() {
   try {
-    const response = await fetch(BASE_URL);
+    const response = await fetch(BASE_URL, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
     const data = await response.json();
     return data;
   } catch (error) {

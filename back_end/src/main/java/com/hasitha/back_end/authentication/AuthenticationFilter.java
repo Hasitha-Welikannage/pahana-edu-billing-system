@@ -24,6 +24,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String path = requestContext.getUriInfo().getPath();
         User user = (User) request.getSession().getAttribute("user");
+        String method = requestContext.getMethod();
 
         // Step 1: Skip auth checks for /auth (login, register, etc.)
         if (path.startsWith("auth")) {
@@ -43,7 +44,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
 
         // Step 3: Restrict /users and /items to ADMIN only
-        if ((path.startsWith("users") || path.startsWith("items")) && !"ADMIN".equalsIgnoreCase(user.getRole())) {
+        if ((path.startsWith("users")) && !"ADMIN".equalsIgnoreCase(user.getRole())) {
             requestContext.abortWith(
                     Response
                             .status(Response.Status.FORBIDDEN)
@@ -51,6 +52,21 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                             .type(MediaType.APPLICATION_JSON)
                             .build()
             );
+        }
+
+        if (path.startsWith("items")) {
+            // Check if the request method is one of the restricted methods
+            if (("POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method))
+                    && !"ADMIN".equalsIgnoreCase(user.getRole())) {
+
+                requestContext.abortWith(
+                        Response
+                                .status(Response.Status.FORBIDDEN)
+                                .entity(new ErrorResponse(MessageConstants.FORBIDDEN_CODE, MessageConstants.FORBIDDEN_ROLE, null))
+                                .type(MediaType.APPLICATION_JSON)
+                                .build()
+                );
+            }
         }
     }
 }
