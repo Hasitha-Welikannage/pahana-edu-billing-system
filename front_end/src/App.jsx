@@ -21,7 +21,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/customers" element={<CustomerManagement />} />
           <Route path="/create-bill" element={<BillCreate />} />
-          <Route path="/bill-history" element={<BillHistory />} />
+          <Route path="/bills/history" element={<BillHistory />} />
           <Route path="/bills/:id" element={<BillDetailsPage />} />
         </Route>
 
