@@ -62,7 +62,7 @@ const Home = () => {
           <FiClock className="w-5 h-5 text-gray-600" />
         </div>
       ),
-      path: "/bill-history",
+      path: "/bills/history",
       roles: ["USER", "ADMIN"],
     },
   ];
