@@ -1,14 +1,20 @@
-// src/pages/ItemPage.jsx
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   fetchItems,
   addItem,
   updateItem,
   deleteItem,
 } from "../../services/item";
-import ItemModal from "./ItemForm";
+
+// Import components from the shared pattern
+import Header from "../../components/Header";
+import StatsCard from "../../components/StatsCard";
+import ErrorMessage from "../../components/ErrorMessage";
 import DeleteConfirm from "../../components/DeleteConfirm";
+import ItemModal from "./ItemForm";
+
+// Import the Feather icons for consistency
+import { FiBox, FiDollarSign, FiAlertTriangle, FiPlus } from "react-icons/fi";
 
 const ItemManagement = () => {
   const [items, setItems] = useState([]);
@@ -18,10 +24,6 @@ const ItemManagement = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    loadItems();
-  }, []);
 
   const loadItems = async () => {
     try {
@@ -40,6 +42,10 @@ const ItemManagement = () => {
     }
   };
 
+  useEffect(() => {
+    loadItems();
+  }, []);
+
   const handleAdd = () => {
     setSelectedItem(null);
     setShowModal(true);
@@ -56,7 +62,6 @@ const ItemManagement = () => {
   };
 
   const handleSubmit = async (data) => {
-    console.log("Submitting item data:", data);
     try {
       if (selectedItem) {
         await updateItem(selectedItem.id, data);
@@ -82,88 +87,70 @@ const ItemManagement = () => {
     }
   };
 
-  const getTotalValue = () => {
-    return items.reduce((total, item) => total + (item.stock * item.price), 0);
-  };
+  // Helper functions for stats, memoized for performance
+  const getTotalValue = useMemo(() => {
+    return items.reduce((total, item) => total + item.stock * item.price, 0);
+  }, [items]);
 
-  const getLowStockItems = () => {
-    return items.filter(item => item.stock <= 5).length;
-  };
+  const getLowStockItems = useMemo(() => {
+    return items.filter((item) => item.stock <= 5).length;
+  }, [items]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Item Management</h1>
-            <p className="text-gray-600 mt-1">Manage your inventory and stock levels</p>
-          </div>
-          <button
-            onClick={handleAdd}
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span>Add Item</span>
-          </button>
-        </div>
+        {/* Header (Refactored) */}
+        <Header
+          action={handleAdd}
+          content={{
+            title: "Item Management",
+            description: "Manage your inventory and stock levels",
+            buttonText: "Add Item",
+            buttonIcon: <FiPlus className="w-5 h-5" />,
+          }}
+        />
 
-        {/* Stats Cards */}
+        {/* Stats Cards (Refactored) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Total Items</p>
-                <p className="text-2xl font-semibold text-gray-900">{items.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Total Value</p>
-                <p className="text-2xl font-semibold text-gray-900">Rs. {getTotalValue().toFixed(2)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-red-50 rounded-lg">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Low Stock</p>
-                <p className="text-2xl font-semibold text-gray-900">{getLowStockItems()}</p>
-              </div>
-            </div>
-          </div>
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <FiBox className="w-5 h-5 text-blue-600" />
+                </div>
+              ),
+              title: "Total Items",
+              value: items.length,
+            }}
+          />
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-green-50 rounded-lg">
+                  <FiDollarSign className="w-5 h-5 text-green-600" />
+                </div>
+              ),
+              title: "Total Value",
+              value: `Rs. ${getTotalValue.toFixed(2)}`,
+            }}
+          />
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-red-50 rounded-lg">
+                  <FiAlertTriangle className="w-5 h-5 text-red-600" />
+                </div>
+              ),
+              title: "Low Stock",
+              value: getLowStockItems,
+            }}
+          />
         </div>
 
-        {/* Error Message */}
+        {/* Error Message (Refactored) */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-red-700">{error}</p>
-            </div>
+          <div className="mb-4">
+            <ErrorMessage error={error} />
           </div>
         )}
 
@@ -171,9 +158,11 @@ const ItemManagement = () => {
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Inventory Items</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Inventory Items
+              </h3>
               <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                {items.length} {items.length === 1 ? 'Item' : 'Items'}
+                {items.length} {items.length === 1 ? "Item" : "Items"}
               </span>
             </div>
           </div>
@@ -205,7 +194,9 @@ const ItemManagement = () => {
                     <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                        <span className="ml-2 text-gray-600">Loading items...</span>
+                        <span className="ml-2 text-gray-600">
+                          Loading items...
+                        </span>
                       </div>
                     </td>
                   </tr>
@@ -213,28 +204,38 @@ const ItemManagement = () => {
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="text-gray-500">
-                        <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        <p className="text-lg font-medium text-gray-900 mb-2">No items found</p>
-                        <p className="text-gray-500">Get started by adding your first inventory item.</p>
+                        <FiBox className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+
+                        <p className="text-lg font-medium text-gray-900 mb-2">
+                          No items found
+                        </p>
+                        <p className="text-gray-500">
+                          Get started by adding your first inventory item.
+                        </p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   items.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={item.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {item.name}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          item.stock <= 5 
-                            ? 'bg-red-100 text-red-800' 
-                            : item.stock <= 20
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            item.stock <= 5
+                              ? "bg-red-100 text-red-800"
+                              : item.stock <= 20
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
                           {item.stock} units
                         </span>
                       </td>
@@ -248,13 +249,13 @@ const ItemManagement = () => {
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() => handleEdit(item)}
-                            className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+                            className="px-3 py-1 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(item)}
-                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer"
                           >
                             Delete
                           </button>
@@ -280,7 +281,7 @@ const ItemManagement = () => {
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={confirmDelete}
-        itemType="Item"
+        itemType="item"
         itemName={itemToDelete?.name || ""}
       />
     </div>

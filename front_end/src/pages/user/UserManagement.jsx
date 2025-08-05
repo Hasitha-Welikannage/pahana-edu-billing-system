@@ -140,7 +140,11 @@ function UserManagement() {
         </div>
 
         {/* Error Message */}
-        {error && <div className="mb-4"><ErrorMessage error={error} /></div>}
+        {error && (
+          <div className="mb-4">
+            <ErrorMessage error={error} />
+          </div>
+        )}
 
         {/* Users Table */}
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
