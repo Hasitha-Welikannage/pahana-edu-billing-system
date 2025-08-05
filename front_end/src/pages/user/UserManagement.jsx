@@ -1,4 +1,3 @@
-// src/pages/UserManagement.jsx
 import { useEffect, useState } from "react";
 import { FiUsers, FiUserCheck, FiActivity } from "react-icons/fi";
 import { fetchUsers, deleteUser } from "../../services/user";
@@ -141,7 +140,7 @@ function UserManagement() {
         </div>
 
         {/* Error Message */}
-        {error && <ErrorMessage error={error} />}
+        {error && <div className="mb-4"><ErrorMessage error={error} /></div>}
 
         {/* Users Table */}
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
