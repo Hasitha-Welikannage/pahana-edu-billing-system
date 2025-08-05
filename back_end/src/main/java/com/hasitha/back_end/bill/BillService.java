@@ -1,66 +1,98 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hasitha.back_end.bill;
 
 import com.hasitha.back_end.exceptions.ValidationException;
+import com.hasitha.back_end.exceptions.NotFoundException;  // Assuming this exists
 import java.util.List;
 
-
+/**
+ * Service layer for handling Bill-related business logic and validation.
+ */
 public class BillService {
 
-    private final BillDAOInterface billDao = new BillDAO();
+    private final BillDAO billDao;
 
-    public Bill createBill(Bill bill) {
+    /**
+     * Constructs BillService with a specified BillDAO.
+     *
+     * @param billDao the BillDAO implementation to use
+     */
+    public BillService(BillDAO billDao) {
+        this.billDao = billDao;
+    }
 
+    /**
+     * Default constructor initializes with BillDAOImpl.
+     */
+    public BillService() {
+        this.billDao = new BillDAOImpl();
+    }
+
+    /**
+     * Creates a new Bill after validating its fields.
+     *
+     * @param bill the Bill to create
+     * @return the created Bill with generated ID
+     * @throws ValidationException if the bill is invalid
+     */
+    public Bill create(Bill bill) {
         validateBill(bill);
-
         return billDao.create(bill);
     }
 
-    public List<Bill> getBillList() {
-
+    /**
+     * Retrieves all bills from the data source.
+     *
+     * @return list of all bills
+     * @throws NotFoundException if no bills are found
+     */
+    public List<Bill> findAll() {
         List<Bill> list = billDao.findAll();
 
         if (list == null || list.isEmpty()) {
-            throw new ValidationException("bills can not found");
+            throw new NotFoundException("No bills found.");
         }
 
         return list;
     }
 
-    public Bill getBillById(int id) {
-
+    /**
+     * Retrieves a Bill by its ID.
+     *
+     * @param id the bill ID
+     * @return the Bill object
+     * @throws NotFoundException if no bill with the given ID exists
+     */
+    public Bill findById(int id) {
         Bill bill = billDao.findById(id);
 
         if (bill == null) {
-            throw new ValidationException("Bill with ID " + id + " does not exist.");
+            throw new NotFoundException("Bill with ID " + id + " not found.");
         }
 
         return bill;
     }
 
+    /**
+     * Validates required fields of the given Bill.
+     *
+     * @param bill the Bill object to validate
+     * @throws ValidationException if validation fails
+     */
     private void validateBill(Bill bill) {
         if (bill == null) {
-            throw new ValidationException("Bill header cannot be null.");
+            throw new ValidationException("Bill cannot be null.");
         }
-
-        if (bill.getCustomerId() == 0 || bill.getCustomerId() < 0) {
-            throw new ValidationException("customer is required.");
+        if (bill.getCustomerId() <= 0) {
+            throw new ValidationException("Customer ID must be a positive integer.");
         }
-
-        if (bill.getUserId() == 0 || bill.getUserId() < 0) {
-            throw new ValidationException("user is required.");
+        if (bill.getUserId() <= 0) {
+            throw new ValidationException("User ID must be a positive integer.");
         }
-
         if (bill.getTotal() == 0) {
-            throw new ValidationException("total price cannot be zero.");
+            throw new ValidationException("Total price must be greater than zero.");
         }
-
         if (bill.getTotal() < 0) {
-            throw new ValidationException("total price cannot be negative.");
+            throw new ValidationException("Total price cannot be negative.");
         }
     }
-
 }

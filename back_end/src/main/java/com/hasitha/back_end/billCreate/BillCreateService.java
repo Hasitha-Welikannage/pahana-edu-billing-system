@@ -58,7 +58,7 @@ public class BillCreateService {
 
         // 3. Persist billDto header
         Bill billHeader = new Bill(0, req.getCustomerId(), userId, new Date(), grandTotal);
-        billHeader = billService.createBill(billHeader);
+        billHeader = billService.create(billHeader);
 
         // 4. Persist all items
         billItemService.saveBillItems(billHeader.getId(), items);
@@ -83,7 +83,7 @@ public class BillCreateService {
 
     public List<BillDTO> getAllBills() {
 
-        List<Bill> bills = billService.getBillList();
+        List<Bill> bills = billService.findAll();
         List<BillDTO> billDto = new ArrayList();
         Customer customer;
         User user;
