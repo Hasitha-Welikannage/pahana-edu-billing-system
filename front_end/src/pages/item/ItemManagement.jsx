@@ -8,7 +8,7 @@ import {
   deleteItem,
 } from "../../services/item";
 import ItemModal from "./ItemForm";
-import DeleteConfirm from "../user/DeleteConfirm";
+import DeleteConfirm from "../../components/DeleteConfirm";
 
 const ItemManagement = () => {
   const [items, setItems] = useState([]);
@@ -280,8 +280,8 @@ const ItemManagement = () => {
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={confirmDelete}
-        ItemType="Item"
-        ItemName={itemToDelete?.name || ""}
+        itemType="Item"
+        itemName={itemToDelete?.name || ""}
       />
     </div>
   );

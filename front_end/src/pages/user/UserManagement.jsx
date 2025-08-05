@@ -4,7 +4,7 @@ import { FiUsers, FiUserCheck, FiActivity } from "react-icons/fi";
 import { fetchUsers, deleteUser } from "../../services/user";
 
 import UserForm from "./UserForm";
-import DeleteConfirm from "./DeleteConfirm";
+import DeleteConfirm from "../../components/DeleteConfirm";
 import StatsCard from "../../components/StatsCard";
 import ErrorMessage from "../../components/ErrorMessage";
 import Header from "../../components/Header";
@@ -285,8 +285,8 @@ function UserManagement() {
             isOpen={showDelete}
             onClose={() => setShowDelete(false)}
             onConfirm={handleConfirmDelete}
-            ItemType="User"
-            ItemName={`${deletingUser?.firstName} ${deletingUser?.lastName}`}
+            itemType="User"
+            itemName={`${deletingUser?.firstName} ${deletingUser?.lastName}`}
           />
         )}
       </div>

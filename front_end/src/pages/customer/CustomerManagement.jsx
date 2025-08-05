@@ -6,7 +6,7 @@ import {
   deleteCustomer,
 } from "../../services/customer";
 import CustomerForm from "./CustomerForm";
-import DeleteConfirm from "../user/DeleteConfirm";
+import DeleteConfirm from "../../components/DeleteConfirm";
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -284,8 +284,8 @@ const CustomerManagement = () => {
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleDelete}
-        ItemType="Customer"
-        ItemName={deleteTarget ? `${deleteTarget.firstName} ${deleteTarget.lastName}` : ""}
+        itemType="Customer"
+        itemName={deleteTarget ? `${deleteTarget.firstName} ${deleteTarget.lastName}` : ""}
       />
     </div>
   );
