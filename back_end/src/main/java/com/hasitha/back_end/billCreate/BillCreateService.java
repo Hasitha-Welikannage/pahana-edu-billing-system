@@ -1,120 +1,164 @@
-
 package com.hasitha.back_end.billCreate;
 
 import com.hasitha.back_end.bill.Bill;
 import com.hasitha.back_end.bill.BillDTO;
 import com.hasitha.back_end.bill.BillService;
-import com.hasitha.back_end.billCreate.CreateBillRequest.ItemDTO;
+import com.hasitha.back_end.billCreate.CreateBillRequest.BillItemRequest;
 import com.hasitha.back_end.billItem.BillItem;
 import com.hasitha.back_end.billItem.BillItemDTO;
 import com.hasitha.back_end.billItem.BillItemService;
 import com.hasitha.back_end.customer.Customer;
 import com.hasitha.back_end.customer.CustomerService;
-import com.hasitha.back_end.exceptions.AppException;
+import com.hasitha.back_end.exceptions.ValidationException;
 import com.hasitha.back_end.item.Item;
 import com.hasitha.back_end.item.ItemService;
 import com.hasitha.back_end.user.User;
 import com.hasitha.back_end.user.UserService;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service class for handling bill creation and retrieval logic.
+ */
 public class BillCreateService {
 
-    ItemService itemService = new ItemService();
-    CustomerService customerService = new CustomerService();
-    UserService userService = new UserService();
-    BillService billService = new BillService();
-    BillItemService billItemService = new BillItemService();
+    private final ItemService itemService;
+    private final CustomerService customerService;
+    private final UserService userService;
+    private final BillService billService;
+    private final BillItemService billItemService;
 
-    public BillDTO createBill(int userId, CreateBillRequest req) {
+    /**
+     * Constructor with dependency injection.
+     */
+    public BillCreateService(ItemService itemService, CustomerService customerService, UserService userService, BillService billService, BillItemService billItemService) {
+        this.itemService = itemService;
+        this.customerService = customerService;
+        this.userService = userService;
+        this.billService = billService;
+        this.billItemService = billItemService;
+    }
 
-        List<BillItem> items = new ArrayList<>();
+    /**
+     * Default constructor with default service initializations.
+     */
+    public BillCreateService() {
+        this.itemService = new ItemService();
+        this.customerService = new CustomerService();
+        this.userService = new UserService();
+        this.billService = new BillService();
+        this.billItemService = new BillItemService();
+    }
+
+    /**
+     * Creates a bill from the provided request and user.
+     *
+     * @param userId ID of the user creating the bill.
+     * @param req Request object containing customer ID and bill items.
+     * @return Created {@link BillDTO} containing full bill details.
+     * @throws ValidationException if input data is invalid.
+     */
+    public BillDTO createBill(CreateBillRequest req) {
+        Bill bill;
+        List<BillItem> billItems = new ArrayList<>();
+        List<BillItemDTO> billItemDtos = new ArrayList<>();
         double grandTotal = 0;
 
-        Customer customer = customerService.findById(req.getCustomerId());
-        User user = userService.findById(userId);
+        validateCreateRequest(req);
 
-        if (req.getItems() == null || req.getItems().isEmpty()) {
-            throw new AppException("bill must contain at least one item");
-        }
-
-        // 2. Validate each billItem and calc totals
-        for (ItemDTO dto : req.getItems()) {
-            if (dto.getQuantity() <= 0) {
-                throw new AppException("Quantity must be > 0 for item " + dto.getItemId());
-            }
-            itemService.ensureItemExists(dto.getItemId());
-//            if (!itemService.exists(dto.getItemId())) {
-//                throw new AppException("Item does not exist: " + dto.getItemId());
-//            }
-
-            double unitPrice = itemService.getPriceById(dto.getItemId());
-            double subtotal = unitPrice * dto.getQuantity();
+        // Calculate total and prepare bill items
+        for (BillItemRequest itemReq : req.getItems()) {
+            double unitPrice = itemService.getPriceById(itemReq.getItemId());
+            double subtotal = unitPrice * itemReq.getQuantity();
             grandTotal += subtotal;
-
-            items.add(new BillItem(0, 0, dto.getItemId(), dto.getQuantity(), subtotal));
+            billItems.add(new BillItem(itemReq.getItemId(), itemReq.getQuantity(), subtotal));
         }
 
-        // 3. Persist billDto header
-        Bill billHeader = new Bill(0, req.getCustomerId(), userId, new Date(), grandTotal);
-        billHeader = billService.create(billHeader);
+        // Create bill and save items
+        bill = billService.create(new Bill(req.getCustomerId(), req.getUserId(), new Date(), grandTotal));
+        billItemService.saveBillItems(bill.getId(), billItems);
 
-        // 4. Persist all items
-        billItemService.saveBillItems(billHeader.getId(), items);
-
-        billHeader.setItems(billItemService.getBillItemsByBillId(billHeader.getId()));
-
-        //Map the data to DTO classes
-        List<BillItemDTO> billItemsDto = new ArrayList();
-
-        for (BillItem billItem : billHeader.getItems()) {
-
-            Item item = itemService.findById(billItem.getItemId());
-
-            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getSubTotal()));
+        // Retrieve and map saved bill items
+        bill.setItems(billItemService.getBillItemsByBillId(bill.getId()));
+        for (BillItem billItem : bill.getItems()) {
+            billItemDtos.add(convertToBillItemDTO(billItem));
         }
 
-        BillDTO billDto = new BillDTO(billHeader.getId(), customer, user, billHeader.getDate(), billHeader.getTotal(), billItemsDto);
+        Customer customer = customerService.findById(req.getCustomerId());
+        User user = userService.findById(req.getUserId());
 
-        return billDto;
+        return new BillDTO(bill.getId(), customer, user, bill.getDate(), bill.getTotal(), billItemDtos);
     }
-    // convenience pass‑throughs
 
+    /**
+     * Returns all bills with basic customer and user information.
+     *
+     * @return List of {@link BillDTO} without bill items.
+     */
     public List<BillDTO> getAllBills() {
-
         List<Bill> bills = billService.findAll();
-        List<BillDTO> billDto = new ArrayList();
-        Customer customer;
-        User user;
-
+        List<BillDTO> billDtos = new ArrayList<>();
         for (Bill bill : bills) {
-
-            customer = customerService.findById(bill.getCustomerId());
-            user = userService.findById(bill.getUserId());
-            user.setPassword("");
-
-            billDto.add(new BillDTO(bill.getId(), customer, user, bill.getDate(), bill.getTotal()));
-
+            Customer customer = customerService.findById(bill.getCustomerId());
+            User user = userService.findById(bill.getUserId());
+            billDtos.add(new BillDTO(bill.getId(), customer, user, bill.getDate(), bill.getTotal()));
         }
-
-        return billDto;
+        return billDtos;
     }
 
-    public List<BillItemDTO> getItemsForBill(int billId) {
-
+    /**
+     * Returns list of items for a specific bill.
+     *
+     * @param billId ID of the bill.
+     * @return List of {@link BillItemDTO} for the bill.
+     */
+    public List<BillItemDTO> getBillItemsByBillId(int billId) {
         List<BillItem> billItems = billItemService.getBillItemsByBillId(billId);
-        List<BillItemDTO> billItemsDto = new ArrayList();
+        List<BillItemDTO> billItemDtos = new ArrayList<>();
 
         for (BillItem billItem : billItems) {
-
-            Item item = itemService.findById(billItem.getItemId());
-
-            billItemsDto.add(new BillItemDTO(billItem.getId(), item.getId(), item.getName(), item.getPrice(), billItem.getQuantity(), billItem.getSubTotal()));
-
+            billItemDtos.add(convertToBillItemDTO(billItem));
         }
+        return billItemDtos;
+    }
 
-        return billItemsDto;
+    /**
+     * Validates the request object before bill creation.
+     *
+     * @param req The {@link CreateBillRequest} to validate.
+     * @throws ValidationException if any rule is violated.
+     */
+    private void validateCreateRequest(CreateBillRequest req) {
+        userService.ensureUserExists(req.getUserId());
+        customerService.ensureCustomerExists(req.getCustomerId());
+        if (req.getItems() == null || req.getItems().isEmpty()) {
+            throw new ValidationException("Bill must contain at least one item.");
+        }
+        for (BillItemRequest dto : req.getItems()) {
+            if (dto.getQuantity() <= 0) {
+                throw new ValidationException("Quantity must be > 0 for item " + dto.getItemId());
+            }
+            itemService.ensureItemExists(dto.getItemId());
+        }
+    }
 
+    /**
+     * Maps a {@link BillItem} to a {@link BillItemDTO}, including item details.
+     *
+     * @param billItem The bill item to map.
+     * @return Mapped DTO.
+     */
+    private BillItemDTO convertToBillItemDTO(BillItem billItem) {
+        Item item = itemService.findById(billItem.getItemId());
+        return new BillItemDTO(
+                billItem.getId(),
+                item.getId(),
+                item.getName(),
+                item.getPrice(),
+                billItem.getQuantity(),
+                billItem.getSubTotal()
+        );
     }
 }

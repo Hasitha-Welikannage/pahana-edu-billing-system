@@ -46,6 +46,21 @@ public class Bill {
      */
     public Bill() {
     }
+    
+    /**
+     * Constructs a Bill with basic details excluding bill Id and items.
+     *
+     * @param customerId the customer ID
+     * @param userId the user ID
+     * @param date the date/time of the bill
+     * @param total the total bill amount
+     */
+    public Bill(int customerId, int userId, Date date, double total) {
+        this.customerId = customerId;
+        this.userId = userId;
+        this.date = date;
+        this.total = total;
+    }
 
     /**
      * Constructs a Bill with basic details excluding items.

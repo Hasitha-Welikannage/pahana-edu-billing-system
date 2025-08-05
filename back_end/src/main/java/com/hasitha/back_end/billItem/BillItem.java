@@ -47,12 +47,12 @@ public class BillItem {
      * @param quantity the quantity purchased
      * @param totalPrice the total price for this item
      */
-    public BillItem(int id, int billId, int itemId, int quantity, double totalPrice) {
+    public BillItem(int id, int billId, int itemId, int quantity, double subTotal) {
         this.id = id;
         this.billId = billId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.subTotal = totalPrice;
+        this.subTotal = subTotal;
     }
 
     /**
@@ -63,11 +63,25 @@ public class BillItem {
      * @param quantity the quantity purchased
      * @param totalPrice the total price for this item
      */
-    public BillItem(int billId, int itemId, int quantity, double totalPrice) {
+    public BillItem(int billId, int itemId, int quantity, double subTotal) {
         this.billId = billId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.subTotal = totalPrice;
+        this.subTotal = subTotal;
+    }
+    
+    /**
+     * Constructor excluding the bill item ID and bill IDs (used for inserts).
+     *
+     * @param billId the associated bill ID
+     * @param itemId the ID of the item
+     * @param quantity the quantity purchased
+     * @param totalPrice the total price for this item
+     */
+    public BillItem(int itemId, int quantity, double subTotal) {
+        this.itemId = itemId;
+        this.quantity = quantity;
+        this.subTotal = subTotal;
     }
 
     public int getId() {
