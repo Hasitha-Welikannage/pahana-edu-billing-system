@@ -1,4 +1,3 @@
-// src/pages/CustomerManagement.jsx
 import { useEffect, useState, useMemo } from "react";
 import {
   fetchCustomers,
