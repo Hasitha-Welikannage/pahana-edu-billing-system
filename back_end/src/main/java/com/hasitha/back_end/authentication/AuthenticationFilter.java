@@ -8,6 +8,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                     Response
                             .status(Response.Status.UNAUTHORIZED)
                             .entity(new ErrorResponse(MessageConstants.UNAUTHORIZED_CODE, MessageConstants.UNAUTHORIZED_ACCESS, null))
+                            .type(MediaType.APPLICATION_JSON)
                             .build()
             );
             return;
@@ -46,6 +48,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                     Response
                             .status(Response.Status.FORBIDDEN)
                             .entity(new ErrorResponse(MessageConstants.FORBIDDEN_CODE, MessageConstants.FORBIDDEN_ROLE, null))
+                            .type(MediaType.APPLICATION_JSON)
                             .build()
             );
         }
