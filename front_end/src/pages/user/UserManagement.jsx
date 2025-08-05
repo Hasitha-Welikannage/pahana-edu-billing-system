@@ -1,8 +1,13 @@
 // src/pages/UserManagement.jsx
 import { useEffect, useState } from "react";
+import { FiUsers, FiUserCheck, FiActivity } from "react-icons/fi";
 import { fetchUsers, deleteUser } from "../../services/user";
+
 import UserForm from "./UserForm";
 import DeleteConfirm from "./DeleteConfirm";
+import StatsCard from "../../components/StatsCard";
+import ErrorMessage from "../../components/ErrorMessage";
+import Header from "../../components/Header";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -72,7 +77,7 @@ function UserManagement() {
   // Helper functions for stats
   const getUsersByRole = () => {
     const roles = {};
-    users.forEach(user => {
+    users.forEach((user) => {
       roles[user.role] = (roles[user.role] || 0) + 1;
     });
     return Object.keys(roles).length;
@@ -80,97 +85,73 @@ function UserManagement() {
 
   const getActiveUsers = () => {
     // Assuming users with recent activity (you can modify this logic)
-    return users.filter(user => user.id > users.length - 3).length;
+    return users.filter((user) => user.id > users.length - 3).length;
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              User Management
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Manage team members and permissions
-            </p>
-          </div>
-          <button
-            onClick={handleAdd}
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span>Add User</span>
-          </button>
-        </div>
+
+        <Header
+          action={handleAdd}
+          content={{
+            title: "User Management",
+            description: "Manage team members and permissions",
+            buttonText: "Add User",
+          }}
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Total Users</p>
-                <p className="text-2xl font-semibold text-gray-900">{users.length}</p>
-              </div>
-            </div>
-          </div>
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <FiUsers className="w-5 h-5 text-blue-600" />
+                </div>
+              ),
+              title: "Total Users",
+              value: users.length,
+            }}
+          />
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-green-50 rounded-lg">
+                  <FiUserCheck className="w-5 h-5 text-green-600" />
+                </div>
+              ),
+              title: "User Roles",
+              value: getUsersByRole(),
+            }}
+          />
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">User Roles</p>
-                <p className="text-2xl font-semibold text-gray-900">{getUsersByRole()}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-50 rounded-lg">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Active Users</p>
-                <p className="text-2xl font-semibold text-gray-900">{getActiveUsers()}</p>
-              </div>
-            </div>
-          </div>
+          <StatsCard
+            data={{
+              icon: (
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <FiActivity className="w-5 h-5 text-purple-600" />
+                </div>
+              ),
+              title: "Active Users",
+              value: getActiveUsers(),
+            }}
+          />
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-red-700">{error}</p>
-            </div>
-          </div>
-        )}
+        {error && <ErrorMessage error={error} />}
 
         {/* Users Table */}
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Team Directory</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Team Directory
+              </h3>
               <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                {users.length} {users.length === 1 ? 'User' : 'Users'}
+                {users.length} {users.length === 1 ? "User" : "Users"}
               </span>
             </div>
           </div>
@@ -202,7 +183,9 @@ function UserManagement() {
                     <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                        <span className="ml-2 text-gray-600">Loading users...</span>
+                        <span className="ml-2 text-gray-600">
+                          Loading users...
+                        </span>
                       </div>
                     </td>
                   </tr>
@@ -210,17 +193,34 @@ function UserManagement() {
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="text-gray-500">
-                        <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        <svg
+                          className="mx-auto h-12 w-12 text-gray-400 mb-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                          />
                         </svg>
-                        <p className="text-lg font-medium text-gray-900 mb-2">No users found</p>
-                        <p className="text-gray-500">Get started by adding your first team member.</p>
+                        <p className="text-lg font-medium text-gray-900 mb-2">
+                          No users found
+                        </p>
+                        <p className="text-gray-500">
+                          Get started by adding your first team member.
+                        </p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={user.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
@@ -237,7 +237,9 @@ function UserManagement() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.userName}</div>
+                        <div className="text-sm text-gray-900">
+                          {user.userName}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
