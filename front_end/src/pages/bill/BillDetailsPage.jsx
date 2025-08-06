@@ -92,7 +92,7 @@ function BillDetailsPage() {
     return null;
   }
 
-  const formattedDate = new Date(bill.date).toLocaleDateString("en-US", {
+  const formattedDate = new Date(bill.date.replace(/\[.*\]/, "")).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
