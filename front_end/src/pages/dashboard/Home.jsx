@@ -51,7 +51,7 @@ function Home() {
           <FiFileText className="w-5 h-5 text-orange-600" />
         </div>
       ),
-      path: "/create-bill",
+      path: "/bills/new",
       roles: ["USER", "ADMIN"],
     },
     {
@@ -62,7 +62,7 @@ function Home() {
           <FiClock className="w-5 h-5 text-gray-600" />
         </div>
       ),
-      path: "/bills/history",
+      path: "/bills",
       roles: ["USER", "ADMIN"],
     },
   ];

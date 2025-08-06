@@ -20,6 +20,21 @@ public class Customer {
     }
 
     /**
+     * Constructs a new Customer without id.
+     *
+     * @param firstName the first name of the customer
+     * @param lastName the last name of the customer
+     * @param address the address of the customer
+     * @param phoneNumber the contact phone number of the customer
+     */
+    public Customer(String firstName, String lastName, String address, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
      * Constructs a new Customer with all fields.
      *
      * @param id the unique identifier of the customer

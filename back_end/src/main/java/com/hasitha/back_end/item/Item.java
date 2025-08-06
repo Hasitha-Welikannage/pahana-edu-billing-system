@@ -28,6 +28,19 @@ public class Item {
     }
 
     /**
+     * Parameterized constructor to create an item without id.
+     *
+     * @param name the item name
+     * @param unitPrice the price per unit
+     * @param stock the quantity available in stock
+     */
+    public Item(String name, double unitPrice, int stock) {
+        this.name = name;
+        this.price = unitPrice;
+        this.stock = stock;
+    }
+
+    /**
      * Parameterized constructor to create an item with all fields.
      *
      * @param id the item ID

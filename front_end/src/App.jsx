@@ -20,8 +20,10 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/customers" element={<CustomerManagement />} />
-          <Route path="/create-bill" element={<BillCreate />} />
-          <Route path="/bills/history" element={<BillHistory />} />
+          
+          {/* Standardized bill routes */}
+          <Route path="/bills" element={<BillHistory />} />
+          <Route path="/bills/new" element={<BillCreate />} />
           <Route path="/bills/:id" element={<BillDetailsPage />} />
         </Route>
 
