@@ -1,10 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import {
-  fetchCustomers,
-  addCustomer,
-  updateCustomer,
-  deleteCustomer,
-} from "../../services/customer";
+import { fetchCustomers, deleteCustomer } from "../../services/customer";
 
 // Import reusable components
 import Header from "../../components/Header";
@@ -61,19 +56,10 @@ const CustomerManagement = () => {
     setShowDelete(true);
   };
 
-  const handleSave = async (data) => {
-    try {
-      if (editingCustomer) {
-        await updateCustomer(editingCustomer.id, data);
-      } else {
-        await addCustomer(data);
-      }
-      setShowForm(false);
-      setEditingCustomer(null);
-      loadCustomers();
-    } catch (error) {
-      setError("Failed to save customer");
-    }
+  const handleSaveSuccess = () => {
+    setShowForm(false);
+    setEditingCustomer(null);
+    loadCustomers();
   };
 
   const handleConfirmDelete = async () => {
@@ -98,7 +84,6 @@ const CustomerManagement = () => {
   }, [customers]);
 
   const getRecentCustomers = useMemo(() => {
-    // Assuming users with recent activity (you can modify this logic)
     return customers.filter((customer) => customer.id > customers.length - 5)
       .length;
   }, [customers]);
@@ -290,7 +275,7 @@ const CustomerManagement = () => {
           setShowForm(false);
           setEditingCustomer(null);
         }}
-        onSave={handleSave}
+        onSaveSuccess={handleSaveSuccess}
         initialData={editingCustomer}
       />
 

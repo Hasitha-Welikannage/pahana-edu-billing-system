@@ -1,17 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
-import {
-  fetchItems,
-  addItem,
-  updateItem,
-  deleteItem,
-} from "../../services/item";
+import { fetchItems, deleteItem } from "../../services/item";
 
 // Import components from the shared pattern
 import Header from "../../components/Header";
 import StatsCard from "../../components/StatsCard";
 import ErrorMessage from "../../components/ErrorMessage";
 import DeleteConfirm from "../../components/DeleteConfirm";
-import ItemModal from "./ItemForm";
+import ItemForm from "./ItemForm";
 
 // Import the Feather icons for consistency
 import { FiBox, FiDollarSign, FiAlertTriangle, FiPlus } from "react-icons/fi";
@@ -61,18 +56,11 @@ const ItemManagement = () => {
     setShowDelete(true);
   };
 
-  const handleSubmit = async (data) => {
-    try {
-      if (selectedItem) {
-        await updateItem(selectedItem.id, data);
-      } else {
-        await addItem(data);
-      }
-      setShowModal(false);
-      loadItems();
-    } catch (err) {
-      setError("Failed to save item");
-    }
+  // New success callback to refresh the list and close the modal
+  const handleSaveSuccess = () => {
+    setShowModal(false);
+    setSelectedItem(null);
+    loadItems();
   };
 
   const confirmDelete = async () => {
@@ -270,10 +258,10 @@ const ItemManagement = () => {
         </div>
       </div>
 
-      <ItemModal
+      <ItemForm
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onSubmit={handleSubmit}
+        onSaveSuccess={handleSaveSuccess}
         initialData={selectedItem}
       />
 

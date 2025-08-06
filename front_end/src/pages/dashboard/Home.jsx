@@ -5,7 +5,7 @@ import MenuCard from "./MenuCard";
 
 import { FiUsers, FiBox, FiUser, FiFileText, FiClock } from "react-icons/fi";
 
-const Home = () => {
+function Home() {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
 

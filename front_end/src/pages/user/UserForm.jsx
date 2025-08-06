@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-
 import { addUser, updateUser } from "../../services/user";
 import ErrorMessage from "../../components/ErrorMessage";
 
@@ -15,10 +14,17 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Added for submission loading
 
   useEffect(() => {
     if (initialData) {
-      setFormData({ ...initialData, password: "" }); // Don't show password
+      setFormData({
+        firstName: initialData.firstName || "",
+        lastName: initialData.lastName || "",
+        userName: initialData.userName || "",
+        password: "", // Don't pre-fill password for security
+        role: initialData.role || "USER",
+      });
     } else {
       setFormData({
         firstName: "",
@@ -28,7 +34,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
         role: "USER",
       });
     }
-    setError("");
+    setError(""); // Clear error when modal opens or initialData changes
   }, [initialData, isOpen]);
 
   const handleChange = (e) => {
@@ -36,54 +42,67 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
     setFormData((fd) => ({ ...fd, [name]: value }));
   };
 
-  const saveUser = async (formData) => {
+  const saveUser = async (data) => {
+    // Renamed formData to data for clarity
     try {
-      const res = await addUser(formData);
+      setIsSubmitting(true);
+      const res = await addUser(data);
       if (!res.success) {
         setError(res.message);
       } else {
-        onSave();
+        onSave(); // Call parent's onSave to close modal and refresh data
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const editUser = async (id, formData) => {
+  const editUser = async (id, data) => {
+    // Renamed formData to data for clarity
+    const dataToSend = { ...data };
+    // Only send password if it's not empty, otherwise backend keeps current
+    if (dataToSend.password === "") {
+      delete dataToSend.password;
+    }
+
     try {
-      const res = await updateUser(id, formData);
+      setIsSubmitting(true);
+      const res = await updateUser(id, dataToSend);
       if (!res.success) {
         setError(res.message);
       } else {
-        onSave();
+        onSave(); // Call parent's onSave to close modal and refresh data
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+
     // Simple validation
     if (
       !formData.firstName ||
       !formData.lastName ||
       !formData.userName ||
-      (!initialData && !formData.password)
+      (!initialData && !formData.password) // Password required only for new users
     ) {
       setError("All fields are required.");
+      return; // Stop submission if validation fails
+    }
+
+    if (initialData) {
+      // Edit mode
+      editUser(initialData.id, formData);
     } else {
-      try {
-        if (initialData) {
-          // Edit mode
-          editUser(initialData.id, formData);
-        } else {
-          // Add mode
-          saveUser(formData);
-        }
-      } catch (err) {
-        setError(err.message);
-      }
+      // Add mode
+      saveUser(formData);
     }
   };
 
@@ -120,6 +139,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   placeholder="Enter first name"
+                  required
                 />
               </div>
 
@@ -138,6 +158,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   placeholder="Enter last name"
+                  required
                 />
               </div>
             </div>
@@ -157,6 +178,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 placeholder="Enter username"
+                required
               />
             </div>
 
@@ -183,6 +205,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
                   placeholder={
                     initialData ? "Enter new password" : "Enter password"
                   }
+                  required={!initialData} // Password is required only for new users
                 />
                 <button
                   type="button"
@@ -216,8 +239,36 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
                 <option value="USER">User</option>
               </select>
             </div>
+
+            {/* Preview Section - Added */}
+            {(formData.firstName || formData.lastName || formData.userName) && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Preview
+                </h4>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <div>
+                    <span className="font-medium">Name:</span>{" "}
+                    {formData.firstName || "First"}{" "}
+                    {formData.lastName || "Last"}
+                  </div>
+                  <div>
+                    <span className="font-medium">Username:</span>{" "}
+                    {formData.userName || "username"}
+                  </div>
+                  <div>
+                    <span className="font-medium">Role:</span>{" "}
+                    {formData.role || "User"}
+                  </div>
+                </div>
+              </div>
+            )}
           </form>
-          {error && <div className="mt-4"><ErrorMessage error={error} /></div>}
+          {error && (
+            <div className="mt-4">
+              <ErrorMessage error={error} />
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -227,15 +278,26 @@ const UserFormModal = ({ isOpen, onClose, onSave, initialData }) => {
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-colors cursor-pointer"
+              disabled={isSubmitting} // Disable cancel button during submission
             >
               Cancel
             </button>
             <button
               type="submit"
               onClick={handleSubmit}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-colors cursor-pointer flex items-center space-x-2"
+              disabled={isSubmitting} // Disable submit button during submission
             >
-              {initialData ? "Update User" : "Add User"}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <span>{initialData ? "Update User" : "Add User"}</span>
+                </>
+              )}
             </button>
           </div>
         </div>
