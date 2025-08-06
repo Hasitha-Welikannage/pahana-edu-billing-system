@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* In your main CSS file (e.g., index.css) */
+@media print {
+  /* Hide the header and any buttons */
+  .hide-on-print {
+    display: none;
+  }
+
+  /* Adjust body and page layout for printing */
+  body {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Make sure the bill content fills the page */
+  .bill-content {
+    width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+}
 /* * {
   box-sizing: border-box;
   margin: 0;

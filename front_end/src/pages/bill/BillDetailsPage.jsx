@@ -44,14 +44,65 @@ function BillDetailsPage() {
     }
   }, [id]);
 
-  // New handler for the "Go Home" button
   const handleGoHome = () => {
-    navigate("/home"); // Navigates to the home/dashboard page
+    navigate("/home");
   };
 
+  // The print function to implement
   const handlePrintBill = () => {
-    alert("Print functionality not implemented yet!");
-    console.log("Printing bill:", bill);
+    window.print();
+  };
+
+  // Helper function to format date safely
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+
+    try {
+      const cleanDateString = dateString.replace(/\[.*\]/, "");
+      const date = new Date(cleanDateString);
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch (error) {
+      return "Invalid Date";
+    }
+  };
+
+  // Helper function to format time safely
+  const formatTime = (dateString) => {
+    if (!dateString) return "";
+
+    try {
+      const cleanDateString = dateString.replace(/\[.*\]/, "");
+
+      const date = new Date(cleanDateString);
+      if (isNaN(date.getTime())) {
+        return "";
+      }
+
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "";
+    }
+  };
+
+  // Helper function to format the phone number
+  const formatPhoneNumber = (number) => {
+    if (!number || number.length < 10) return number;
+    const part1 = number.substring(0, 3);
+    const part2 = number.substring(3, 5);
+    const part3 = number.substring(5, 8);
+    const part4 = number.substring(8, 12);
+    return `${part1} ${part2} ${part3} ${part4}`;
   };
 
   if (loading) {
@@ -74,7 +125,9 @@ function BillDetailsPage() {
           <div className="mb-4">
             <ErrorMessage error={error} />
           </div>
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mt-8 hide-on-print">
+            {" "}
+            {/* Added hide-on-print class */}
             <button
               onClick={handleGoHome}
               className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
@@ -92,26 +145,22 @@ function BillDetailsPage() {
     return null;
   }
 
-  const formattedDate = new Date(bill.date.replace(/\[.*\]/, "")).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <Header
-          action={handleGoHome}
-          content={{
-            title: "Bill Details",
-            description: `Details for Bill ID: #${bill.id}`,
-            buttonText: "Go Home",
-          }}
-          showActionButton={false}
-        />
+        <div className="hide-on-print">
+          {" "}
+          {/* Wrapped Header with a div that hides it */}
+          <Header
+            action={handleGoHome}
+            content={{
+              title: "Bill Details",
+              description: `Details for Bill ID: #${bill.id}`,
+              buttonText: "Go Home",
+            }}
+            showActionButton={false}
+          />
+        </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
@@ -129,7 +178,7 @@ function BillDetailsPage() {
 
             <button
               onClick={handlePrintBill}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2 hide-on-print" // Added hide-on-print class
             >
               <FiPrinter className="w-5 h-5" />
               <span>Print Bill</span>
@@ -145,7 +194,11 @@ function BillDetailsPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Date:</span>
-                    <span className="font-medium">{formattedDate}</span>
+                    <span className="font-medium">{formatDate(bill.date)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Time:</span>
+                    <span className="font-medium">{formatTime(bill.date)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Created by:</span>
@@ -172,7 +225,7 @@ function BillDetailsPage() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Phone:</span>
                     <span className="font-medium">
-                      {bill.customer?.phoneNumber}
+                      {formatPhoneNumber(bill.customer?.phoneNumber)}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -210,13 +263,13 @@ function BillDetailsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {item.itemName}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                       {item.quantity}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                       Rs.{item.unitPrice.toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
                       Rs.{item.subTotal.toFixed(2)}
                     </td>
                   </tr>
