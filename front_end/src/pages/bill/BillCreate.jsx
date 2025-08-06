@@ -207,6 +207,7 @@ function BillCreate() {
             buttonText: "View All Bills",
             buttonIcon: <FiArrowRight className="w-5 h-5" />,
           }}
+          showActionButton={false}
         />
 
         {/* Stats Cards (using reusable StatsCard component) */}

@@ -109,8 +109,8 @@ function BillDetailsPage() {
             title: "Bill Details",
             description: `Details for Bill ID: #${bill.id}`,
             buttonText: "Go Home",
-            buttonIcon: <FiHome className="w-5 h-5" />,
           }}
+          showActionButton={false}
         />
 
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">

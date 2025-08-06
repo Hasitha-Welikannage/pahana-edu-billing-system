@@ -100,6 +100,7 @@ const CustomerManagement = () => {
             buttonText: "Add Customer",
             buttonIcon: <FiPlus className="w-5 h-5" />,
           }}
+          showActionButton={true}
         />
 
         {/* Stats Cards */}

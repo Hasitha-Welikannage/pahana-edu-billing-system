@@ -96,6 +96,7 @@ const ItemManagement = () => {
             buttonText: "Add Item",
             buttonIcon: <FiPlus className="w-5 h-5" />,
           }}
+          showActionButton={true}
         />
 
         {/* Stats Cards (Refactored) */}

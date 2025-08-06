@@ -99,6 +99,7 @@ function UserManagement() {
             description: "Manage team members and permissions",
             buttonText: "Add User",
           }}
+          showActionButton={true}
         />
 
         {/* Stats Cards */}
