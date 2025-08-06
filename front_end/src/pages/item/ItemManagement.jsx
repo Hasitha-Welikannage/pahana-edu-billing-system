@@ -66,12 +66,18 @@ const ItemManagement = () => {
   const confirmDelete = async () => {
     try {
       if (itemToDelete) {
-        await deleteItem(itemToDelete.id);
-        setShowDelete(false);
+        const data = await deleteItem(itemToDelete.id);
+        if (!data.success) {
+          setError(data.message || "Failed to delete item");
+          return;
+        }
         loadItems();
       }
     } catch (err) {
       setError("Failed to delete item");
+    }finally {
+      setShowDelete(false);
+      setItemToDelete(null);
     }
   };
 

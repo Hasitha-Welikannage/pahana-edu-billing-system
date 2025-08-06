@@ -64,12 +64,17 @@ const CustomerManagement = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteCustomer(deletingCustomer.id);
-      setShowDelete(false);
-      setDeletingCustomer(null);
+      const data = await deleteCustomer(deletingCustomer.id);
+      if (!data.success) {
+        setError(data.message || "Failed to delete customer");
+        return;
+      }
       loadCustomers();
     } catch (error) {
       setError("Failed to delete customer");
+    } finally {
+      setShowDelete(false);
+      setDeletingCustomer(null);
     }
   };
 

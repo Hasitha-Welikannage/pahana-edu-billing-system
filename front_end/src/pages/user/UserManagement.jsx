@@ -65,11 +65,13 @@ function UserManagement() {
       if (!res.success) {
         setError(res.message);
       } else {
-        setShowDelete(false);
         loadUsers();
       }
     } catch (err) {
       setError("Failed to delete user");
+    } finally {
+      setDeletingUser(null);
+      setShowDelete(false);
     }
   };
 

@@ -283,7 +283,7 @@ function BillDetailsPage() {
               <span className="text-xl font-semibold text-gray-900">
                 Total Amount:
               </span>
-              <span className="text-3xl font-bold text-green-600">
+              <span className="text-3xl font-bold text-gray-900">
                 Rs.{bill.total.toFixed(2)}
               </span>
             </div>
