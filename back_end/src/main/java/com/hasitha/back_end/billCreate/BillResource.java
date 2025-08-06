@@ -96,4 +96,14 @@ public class BillResource {
                 .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.LIST_SUCCESS, billItems))
                 .build();
     }
+
+    @GET
+    @Path("/{id}")
+    public Response getBill(@PathParam("id") int id) {
+        BillDTO bill = billCreateService.getBill(id);
+        return Response
+                .status(Response.Status.OK)
+                .entity(new ApiResponse(MessageConstants.SUCCESS_CODE, MessageConstants.READ_SUCCESS, bill))
+                .build();
+    }
 }

@@ -30,3 +30,18 @@ export async function getAllBills() {
     throw new Error("Failed to fetch bills. Please try again later.");
   }
 }
+
+export async function getBillById(id) {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Error fetching bill with ID ${id}:`, error);
+    throw new Error("Failed to fetch bill details. Please try again later.");
+  }
+}

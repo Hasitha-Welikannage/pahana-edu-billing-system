@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { fetchCustomers } from "../../services/customer";
 import { fetchItems } from "../../services/item";
-import { createBill } from "../../services/bill";
+import { createBill } from "../../services/bill"; // Ensure this import is correct
 import { useNavigate } from "react-router-dom";
 
 // Import reusable components
@@ -11,7 +11,14 @@ import StatsCard from "../../components/StatsCard";
 import ErrorMessage from "../../components/ErrorMessage";
 
 // Import Feather Icons for consistency
-import { FiUsers, FiBox, FiDollarSign, FiPlus, FiArrowRight, FiUser, FiPhone } from "react-icons/fi"; // Added FiPhone
+import {
+  FiUsers,
+  FiBox,
+  FiDollarSign,
+  FiPlus,
+  FiArrowRight,
+  FiUser,
+} from "react-icons/fi"; // Removed FiPhone as it's not directly used for icon
 
 function BillCreate() {
   const navigate = useNavigate();
@@ -158,8 +165,8 @@ function BillCreate() {
 
       const res = await createBill(billData);
       if (res.success) {
-        // Navigate to BillDetails page, passing the created bill data
-        navigate(`/bills/${res.data.id}`, { state: { bill: res.data } });
+        // Navigate to BillDetails page, only passing the ID
+        navigate(`/bills/${res.data.id}`); // <--- Changed here: Removed `{ state: { bill: res.data } }`
       } else {
         setError(res.message || "Failed to create bill.");
       }
@@ -174,7 +181,6 @@ function BillCreate() {
   const getTotalAmount = useMemo(() => {
     return billItems.reduce((total, item) => total + item.subTotal, 0);
   }, [billItems]);
-
 
   if (loading) {
     return (
@@ -246,9 +252,12 @@ function BillCreate() {
             <div className="flex items-center">
               <FiUser className="w-5 h-5 text-blue-600 mr-3" />
               <div>
-                <p className="text-sm text-blue-600 font-medium">Logged in as</p>
+                <p className="text-sm text-blue-600 font-medium">
+                  Logged in as
+                </p>
                 <p className="text-blue-800 font-semibold">
-                  {currentUser.firstName} {currentUser.lastName} ({currentUser.role})
+                  {currentUser.firstName} {currentUser.lastName} (
+                  {currentUser.role})
                 </p>
               </div>
             </div>
@@ -266,7 +275,9 @@ function BillCreate() {
           {/* Customer Selection by Phone Number */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Customer Selection</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Customer Selection
+              </h3>
               <button
                 onClick={() => navigate("/customers")}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1"
@@ -276,7 +287,10 @@ function BillCreate() {
               </button>
             </div>
 
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Customer Phone Number (e.g., +94712345678)
             </label>
             <div className="flex rounded-lg shadow-sm">
@@ -298,7 +312,9 @@ function BillCreate() {
             {/* Selected Customer Details */}
             {selectedCustomer && (
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Customer Information</h4>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                  Customer Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Name:</span>
@@ -308,7 +324,9 @@ function BillCreate() {
                   </div>
                   <div>
                     <span className="text-gray-600">Phone:</span>
-                    <p className="font-medium">{selectedCustomer.phoneNumber}</p>
+                    <p className="font-medium">
+                      {selectedCustomer.phoneNumber}
+                    </p>
                   </div>
                   <div>
                     <span className="text-gray-600">Address:</span>
@@ -318,17 +336,23 @@ function BillCreate() {
               </div>
             )}
             {!selectedCustomer && phoneNumberInput.length === 9 && !error && (
-              <p className="mt-2 text-sm text-red-600">No customer found with this phone number.</p>
+              <p className="mt-2 text-sm text-red-600">
+                No customer found with this phone number.
+              </p>
             )}
           </div>
 
           {/* Item Selection */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Items</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Add Items
+            </h3>
 
             <div className="flex flex-col md:flex-row gap-4 mb-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Item</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Item
+                </label>
                 <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={currentItemId}
@@ -344,7 +368,9 @@ function BillCreate() {
               </div>
 
               <div className="w-full md:w-32">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quantity
+                </label>
                 <input
                   type="number"
                   min="1"
@@ -373,9 +399,12 @@ function BillCreate() {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Bill Items</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Bill Items
+                  </h3>
                   <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {billItems.length} {billItems.length === 1 ? "Item" : "Items"}
+                    {billItems.length}{" "}
+                    {billItems.length === 1 ? "Item" : "Items"}
                   </span>
                 </div>
               </div>
@@ -433,8 +462,12 @@ function BillCreate() {
               {/* Total */}
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
-                  <span className="text-2xl font-bold text-gray-900">Rs.{getTotalAmount.toFixed(2)}</span>
+                  <span className="text-lg font-semibold text-gray-900">
+                    Total Amount:
+                  </span>
+                  <span className="text-2xl font-bold text-gray-900">
+                    Rs.{getTotalAmount.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -444,7 +477,9 @@ function BillCreate() {
           <div className="flex justify-end">
             <button
               onClick={handleSubmit}
-              disabled={!selectedCustomerId || billItems.length === 0 || isSubmitting}
+              disabled={
+                !selectedCustomerId || billItems.length === 0 || isSubmitting
+              }
               className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
             >
               {isSubmitting ? (

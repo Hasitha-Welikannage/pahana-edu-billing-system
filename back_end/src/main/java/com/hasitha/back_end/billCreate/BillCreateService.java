@@ -124,6 +124,17 @@ public class BillCreateService {
         return billItemDtos;
     }
 
+    public BillDTO getBill(int id) {
+
+        Bill bill = billService.findById(id);
+        List<BillItemDTO> billItems = getBillItemsByBillId(id);
+
+        Customer customer = customerService.findById(bill.getCustomerId());
+        User user = userService.findById(bill.getUserId());
+
+        return new BillDTO(bill.getId(), customer, user, bill.getDate(), bill.getTotal(), billItems);
+    }
+
     /**
      * Validates the request object before bill creation.
      *

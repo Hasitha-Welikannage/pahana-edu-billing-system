@@ -1,65 +1,60 @@
-// src/pages/BillDetails.jsx
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { FiCheckCircle, FiPlus, FiPrinter } from "react-icons/fi"; // Feather icons
+import { useParams, useNavigate } from "react-router-dom";
+import { FiCheckCircle, FiHome, FiPrinter } from "react-icons/fi"; // Changed FiPlus to FiHome
 
-import Header from "../../components/Header"; // Assuming Header is in components
-import ErrorMessage from "../../components/ErrorMessage"; // Assuming ErrorMessage is in components
+import { getBillById } from "../../services/bill";
+
+import Header from "../../components/Header";
+import ErrorMessage from "../../components/ErrorMessage";
 
 function BillDetailsPage() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { id } = useParams();
   const [bill, setBill] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Check if bill data was passed via navigation state
-    if (location.state && location.state.bill) {
-      setBill(location.state.bill);
-      setError("");
-    } else {
-      // If no bill data, show an error or redirect
-      setError("No bill details found. Please create a bill first.");
-      // Optionally, navigate back to the bill creation page after a delay
-      // const timer = setTimeout(() => navigate('/bills/create'), 3000);
-      // return () => clearTimeout(timer);
-    }
-  }, [location.state, navigate]);
+    const fetchBillDetails = async () => {
+      setLoading(true);
+      try {
+        const result = await getBillById(id);
 
-  const handleCreateNewBill = () => {
-    navigate("/bills/create"); // Navigate back to the bill creation page
+        if (result.success) {
+          setBill(result.data);
+          setError("");
+        } else {
+          setError(result.message || "Failed to fetch bill details.");
+        }
+      } catch (err) {
+        setError(
+          err.message ||
+            "An error occurred while fetching bill details. Please try again later."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBillDetails();
+    } else {
+      setError("No bill ID found in the URL.");
+      setLoading(false);
+    }
+  }, [id]);
+
+  // New handler for the "Go Home" button
+  const handleGoHome = () => {
+    navigate("/home"); // Navigates to the home/dashboard page
   };
 
   const handlePrintBill = () => {
-    // In a real application, you'd trigger a print functionality here.
-    // For browser printing, you might use window.print() or a dedicated library.
     alert("Print functionality not implemented yet!");
     console.log("Printing bill:", bill);
   };
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-4">
-            <ErrorMessage error={error} />
-          </div>
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleCreateNewBill}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center space-x-2"
-            >
-              <FiPlus className="w-5 h-5" />
-              <span>Create New Bill</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!bill) {
-    // Show a loading state or a message while waiting for bill data
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
@@ -72,21 +67,52 @@ function BillDetailsPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-4">
+            <ErrorMessage error={error} />
+          </div>
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={handleGoHome}
+              className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
+            >
+              <FiHome className="w-5 h-5" />
+              <span>Go Home</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!bill) {
+    return null;
+  }
+
+  const formattedDate = new Date(bill.date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header (using reusable Header component) */}
         <Header
-          action={handleCreateNewBill}
+          action={handleGoHome}
           content={{
             title: "Bill Details",
             description: `Details for Bill ID: #${bill.id}`,
-            buttonText: "Create New Bill",
-            buttonIcon: <FiPlus className="w-5 h-5" />,
+            buttonText: "Go Home",
+            buttonIcon: <FiHome className="w-5 h-5" />,
           }}
         />
 
-        {/* Bill Summary Card */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -94,7 +120,9 @@ function BillDetailsPage() {
                 <FiCheckCircle className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Bill Created Successfully!</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Bill Created Successfully!
+                </h3>
                 <p className="text-gray-600">Bill ID: #{bill.id}</p>
               </div>
             </div>
@@ -108,15 +136,16 @@ function BillDetailsPage() {
             </button>
           </div>
 
-          {/* Bill Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Bill Information</h4>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                  Bill Information
+                </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Date:</span>
-                    <span className="font-medium">{bill.date}</span>
+                    <span className="font-medium">{formattedDate}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Created by:</span>
@@ -130,7 +159,9 @@ function BillDetailsPage() {
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Customer Information</h4>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                  Customer Information
+                </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Name:</span>
@@ -140,18 +171,21 @@ function BillDetailsPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Phone:</span>
-                    <span className="font-medium">{bill.customer?.phoneNumber}</span>
+                    <span className="font-medium">
+                      {bill.customer?.phoneNumber}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Address:</span>
-                    <span className="font-medium">{bill.customer?.address}</span>
+                    <span className="font-medium">
+                      {bill.customer?.address}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bill Items */}
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -191,11 +225,14 @@ function BillDetailsPage() {
             </table>
           </div>
 
-          {/* Total */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="flex justify-between items-center">
-              <span className="text-xl font-semibold text-gray-900">Total Amount:</span>
-              <span className="text-3xl font-bold text-green-600">Rs.{bill.total.toFixed(2)}</span>
+              <span className="text-xl font-semibold text-gray-900">
+                Total Amount:
+              </span>
+              <span className="text-3xl font-bold text-green-600">
+                Rs.{bill.total.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
