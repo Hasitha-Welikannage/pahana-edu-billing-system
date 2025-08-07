@@ -58,7 +58,7 @@ public class DBConnection {
                 .getResourceAsStream("database.properties")) {
 
             if (input == null) {
-                throw new RuntimeException("Unable to find database.properties");
+                throw new RuntimeException("Unable to find 'database.properties' in classpath");
             }
 
             // Load key-value pairs into the Properties object
