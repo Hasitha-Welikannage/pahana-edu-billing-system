@@ -76,6 +76,10 @@ function BillCreate() {
       setError("Please select an item and enter a valid quantity.");
       return;
     }
+    if(item.stock < parseInt(quantity)) {
+      setError("Insufficient stock available.");
+      return;
+    }
 
     // Check if item already exists in billItems to update quantity
     const existingItemIndex = billItems.findIndex(
@@ -366,6 +370,20 @@ function BillCreate() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="w-full md:w-32">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stock
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="stock"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={items.find((i) => i.id === parseInt(currentItemId))?.stock || ""}
+                  readOnly
+                />
               </div>
 
               <div className="w-full md:w-32">

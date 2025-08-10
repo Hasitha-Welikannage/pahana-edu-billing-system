@@ -74,6 +74,9 @@ public class BillCreateService {
             double subtotal = unitPrice * itemReq.getQuantity();
             grandTotal += subtotal;
             billItems.add(new BillItem(itemReq.getItemId(), itemReq.getQuantity(), subtotal));
+            Item item = itemService.findById(itemReq.getItemId());
+            item.setStock(item.getStock() - itemReq.getQuantity());
+            itemService.update(item.getId(), item);
         }
 
         // Create bill and save items
@@ -147,11 +150,16 @@ public class BillCreateService {
         if (req.getItems() == null || req.getItems().isEmpty()) {
             throw new ValidationException("Bill must contain at least one item.");
         }
-        for (BillItemRequest dto : req.getItems()) {
-            if (dto.getQuantity() <= 0) {
-                throw new ValidationException("Quantity must be > 0 for item " + dto.getItemId());
+        for (BillItemRequest billItemRequest : req.getItems()) {
+            if (billItemRequest.getQuantity() <= 0) {
+                throw new ValidationException("Quantity must be > 0 for item " + billItemRequest.getItemId());
             }
-            itemService.ensureItemExists(dto.getItemId());
+            itemService.ensureItemExists(billItemRequest.getItemId());
+            Item item = itemService.findById(billItemRequest.getItemId());
+            if ((item.getStock() - billItemRequest.getQuantity()) < 0) {
+                throw new ValidationException("Insufficient stock for item '" + item.getName()
+                        + "'. Available: " + item.getStock() + ", requested: " + billItemRequest.getQuantity());
+            }
         }
     }
 
