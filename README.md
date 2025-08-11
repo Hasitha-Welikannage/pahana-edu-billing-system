@@ -54,7 +54,7 @@ The system follows a three-tier architecture:
 ### Steps
 1. Clone the Repository
    ```bash
-   git clone https://github.com/your-username/pahana-edu-billing-system.git
+   git clone https://github.com/Hasitha-Welikannage/pahana-edu-billing-system.git
    
 2.Import into IDE
  - Open in Netbeans
