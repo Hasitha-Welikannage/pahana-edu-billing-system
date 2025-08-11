@@ -43,11 +43,11 @@ The system follows a three-tier architecture:
 ## 🚀 How to Run Locally
 
 ### Prerequisites
-- Java 17+
+- Java 21+
 - Maven 3.8+
 - MySQL Database
 - Netbeans IDE
-- GlassFish Serverver 7
+- GlassFish Serverver 7+
 - Git
 - Node js
 
@@ -62,8 +62,8 @@ The system follows a three-tier architecture:
    
 3. Database Setup
  - Create MySQL database: CREATE DATABASE `pahana_billing`;
- - Update persistence.xml with your DB credentials
+ - Update database.properties with your DB credentials
 
 4. Run the application from the Netbeans IDE
    
-5. For the front end open the front_end folder in vsCode then run "npm init" then "npm run dev"
+5. For the front end open the front_end folder in vsCode then run "npm install" then "npm run dev"
