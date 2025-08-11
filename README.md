@@ -1,15 +1,14 @@
 # Pahana Edu – Online Billing System
 
 ## 📄 Project Description
-The Pahana Edu – Online Billing System is a Java-based web application developed to automate the billing process for a bookshop.  
-It replaces manual billing with a secure, efficient, and user-friendly online platform, enabling smooth customer, item, and bill management.
+The Pahana Edu – Online Billing System is a secure and efficient full-stack web application designed to automate the billing process for a bookshop. It replaces manual billing with a user-friendly online platform for seamless management of customers, items, and bills. The application is built with a clear separation of concerns:
 
-The system follows a three-tier architecture:
-- Presentation Layer: REST APIs (JAX-RS, Jakarta EE)
-- Service Layer: Business logic and validations
-- Data Access Layer (DAO): Database interactions
+- Frontend: A modern, single-page application built with React.js.
+- Backend: A robust RESTful API developed with Java 21 and Jakarta EE (JAX-RS).
+- Database: A relational database managed by MySQL.
 
----
+This architecture ensures modularity, scalability, and maintainability, with the frontend and backend communicating through standardized REST API calls.
+
 
 ## 🎯 Project Goals
 - Eliminate manual billing inefficiencies
@@ -17,7 +16,6 @@ The system follows a three-tier architecture:
 - Provide secure and role-based access
 - Enable quick retrieval of bill history
   
----
 
 ## ✨ Features
 - User Authentication (Login/Logout)
@@ -28,42 +26,39 @@ The system follows a three-tier architecture:
 - Role-based Access (Admin/User)
 - Validation and Error Handling
 
----
 
-## 📦 Modules Implemented
-1. User Management
-2. Customer Management
-3. Item Management
-4. Bill Creation
-5. Bill History
-6. Help Section
+## 📦 Technologies Used
+1. Frontend: React.js, Node.js
+2. Backend: Java 21+, Jakarta EE (JAX-RS)
+3. Database: MySQL
+4. Server: GlassFish Server 7+
+5. Build Tools: Maven 3.8+ (Backend), npm (Frontend)
+6. Version Control: Git
 
----
 
 ## 🚀 How to Run Locally
 
 ### Prerequisites
-- Java 21+
+- Java Development Kit (JDK) 21+ (if using java 17 please update the pom.xml file with java 17 verson)
 - Maven 3.8+
 - MySQL Database
 - Netbeans IDE
 - GlassFish Serverver 7+
 - Git
-- Node js
+- Node.js & npm
 
-### Steps
+### Backend Steps
 1. Clone the Repository
    ```bash
    git clone https://github.com/Hasitha-Welikannage/pahana-edu-billing-system.git
    
-2.Import into IDE
- - Open in Netbeans
- - Configure as Maven project
-   
+2.Import into IDE: Open the project in NetBeans IDE and configure it as a Maven project.
 3. Database Setup
- - Create MySQL database: CREATE DATABASE `pahana_billing`;
- - Update database.properties with your DB credentials
+ - Create MySQL database: CREATE DATABASE `pahana_billing`;(Does not need to create the table in the application run check if table exist and create them if not)
+ - Update the database.properties file with your MySQL credentials.
+4. Run Backend: Deploy and run the application on your GlassFish server from within NetBeans.
 
-4. Run the application from the Netbeans IDE
-   
-5. For the front end open the front_end folder in vsCode then run "npm install" then "npm run dev"
+## Frontend Setup
+1. Navigate to Frontend Directory:
+2. Install Dependencies: npm install
+3. Start the Frontend: npm run dev
