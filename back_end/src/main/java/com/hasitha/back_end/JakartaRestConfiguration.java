@@ -72,7 +72,6 @@ public class JakartaRestConfiguration extends Application {
                     item_id INT NOT NULL,
                     quantity INT NOT NULL,
                     price DECIMAL(10,2) NOT NULL,
-                    total DECIMAL(10,2) NOT NULL,
                     FOREIGN KEY (bill_id) REFERENCES bills(id),
                     FOREIGN KEY (item_id) REFERENCES items(id)
                 )
