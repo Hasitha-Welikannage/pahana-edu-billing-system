@@ -3,7 +3,7 @@ import { logout } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import MenuCard from "./MenuCard";
 
-import { FiUsers, FiBox, FiUser, FiFileText, FiClock } from "react-icons/fi";
+import { FiUsers, FiBox, FiUser, FiFileText, FiClock, FiHelpCircle } from "react-icons/fi";
 
 function Home() {
   const navigate = useNavigate();
@@ -63,6 +63,17 @@ function Home() {
         </div>
       ),
       path: "/bills",
+      roles: ["USER", "ADMIN"],
+    },
+    {
+      title: "Help",
+      description: "Get assistance with using the system",
+      icon: (
+        <div className="p-2 bg-yellow-50 rounded-lg group-hover:bg-gray-100 transition-colors">
+          <FiHelpCircle className="w-5 h-5 text-yellow-600" />
+        </div>
+      ),
+      path: "/help",
       roles: ["USER", "ADMIN"],
     },
   ];

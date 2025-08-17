@@ -7,6 +7,7 @@ import CustomerManagement from "./pages/customer/CustomerManagement";
 import BillCreate from "./pages/bill/BillCreate";
 import BillHistory from "./pages/bill/BillHistory";
 import BillDetailsPage from "./pages/bill/BillDetailsPage";
+import Help from "./pages/help/Help";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/bills" element={<BillHistory />} />
           <Route path="/bills/new" element={<BillCreate />} />
           <Route path="/bills/:id" element={<BillDetailsPage />} />
+          <Route path="/help" element={<Help />} />
         </Route>
 
         {/* Admin-only protected routes */}
